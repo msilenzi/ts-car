@@ -67,10 +67,20 @@ export default class GamepadButtons<T extends ButtonMapper> {
   }
 
   public setNoiseThreshold(noiseThreshold: number): void {
+    if (noiseThreshold < 0 || noiseThreshold > 1) {
+      throw new Error(
+        'noiseThreshold should be a value greater than zero and less than one.'
+      )
+    }
     this.noiseThreshold = noiseThreshold
   }
 
   public setInputDelta(inputDelta: number): void {
+    if (inputDelta < 0 || inputDelta > 1) {
+      throw new Error(
+        'inputDelta should be a value greater than zero and less than one.'
+      )
+    }
     this.inputDelta = inputDelta
   }
 

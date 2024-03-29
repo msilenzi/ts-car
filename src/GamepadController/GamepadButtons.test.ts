@@ -151,4 +151,36 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
       ).toStrictEqual({ buttonB: 0 })
     })
   })
+
+  test('debe actualizar el valor de noiseThreshold correctamente', () => {
+    const gamepadButtons = new GamepadButtons(buttonMapper)
+    
+    gamepadButtons.setNoiseThreshold(0.5)
+
+    expect(() => {
+      gamepadButtons.setNoiseThreshold(-0.5);
+    }).toThrowError('noiseThreshold should be a value greater than zero and less than one.');
+  
+    expect(() => {
+      gamepadButtons.setNoiseThreshold(1.5);
+    }).toThrowError('noiseThreshold should be a value greater than zero and less than one.');
+
+    expect(gamepadButtons.getNoiseThreshold()).toBe(0.5)
+  })
+
+  test('debe actualizar el valor de inputDelta correctamente', () => {
+    const gamepadButtons = new GamepadButtons(buttonMapper)
+    
+    gamepadButtons.setInputDelta(0.5)
+
+    expect(() => {
+      gamepadButtons.setInputDelta(-0.5);
+    }).toThrowError('inputDelta should be a value greater than zero and less than one.');
+  
+    expect(() => {
+      gamepadButtons.setInputDelta(1.5);
+    }).toThrowError('inputDelta should be a value greater than zero and less than one.');
+
+    expect(gamepadButtons.getInputDelta()).toBe(0.5)
+  })
 })
