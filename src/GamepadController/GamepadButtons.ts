@@ -18,7 +18,10 @@ export default class GamepadButtons<T extends ButtonMapper> {
       const newValue = buttons[this.indexes[key]].value
 
       if (this.buttonHasBeenUpdated(lastValue, newValue)) {
-        return { ...obj, [key]: newValue }
+        if (this.isOverNoiseThreshold(newValue)) {
+          return { ...obj, [key]: newValue }
+        }
+        return { ...obj, [key]: 0 }
       }
       return obj
     }, {} as Partial<T>)
@@ -28,19 +31,32 @@ export default class GamepadButtons<T extends ButtonMapper> {
     return updatedValues
   }
 
+  /**
+    - Si ya estaba presionando el botón (lastValueIsOverNoiseThreshold = T),
+      entonces solo actualiza si el delta es mayor.
+    - Sino, actualiza cuando el nuevo valor supera el umbral de ruido.
+
+    | lastValueIsOverNoiseThreshold | newValueIsOverNoiseThreshold | isOverInputDelta | result |
+    | :---------------------------: | :--------------------------: | :--------------: | :----: |
+    |               F               |              F               |        X         | **F**  |
+    |               F               |              T               |        X         | **T**  |
+    |               T               |              X               |        F         | **F**  |
+    |               T               |              X               |        T         | **T**  |
+  */
   private buttonHasBeenUpdated(lastValue: number, newValue: number): boolean {
-    return (
-      this.isOverNoiseThreshold(newValue) &&
-      this.isOverInputDelta(lastValue, newValue)
-    )
+    if (this.isOverNoiseThreshold(lastValue)) {
+      return this.isOverInputDelta(lastValue, newValue)
+    } else {
+      return this.isOverNoiseThreshold(newValue)
+    }
   }
 
   private isOverNoiseThreshold(value: number): boolean {
-    return value > this.noiseThreshold
+    return value >= this.noiseThreshold
   }
 
   private isOverInputDelta(lastValue: number, newValue: number): boolean {
-    return Math.abs(newValue - lastValue) > this.inputDelta
+    return Math.abs(newValue - lastValue) >= this.inputDelta
   }
 
   private initializeStatus(): void {
@@ -64,5 +80,13 @@ export default class GamepadButtons<T extends ButtonMapper> {
 
   public getIndexes(): T {
     return this.indexes
+  }
+
+  public getNoiseThreshold(): number {
+    return this.noiseThreshold
+  }
+
+  public getInputDelta(): number {
+    return this.inputDelta
   }
 }
