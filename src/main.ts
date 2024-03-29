@@ -20,19 +20,29 @@ const xboxButtonMapper = {
   BUTTON_HOME: 16,
 }
 
-type XboxButtonMapper = typeof xboxButtonMapper
-
-let counter = 0
-function handleStatusUpdated(status: Partial<XboxButtonMapper>) {
-  console.log(++counter, status)
+const xboxAxesMapper = {
+  LEFT_THUMBSTICK: { x: 0, y: 1 },
+  RIGHT_THUMBSTICK: { x: 2, y: 3 },
 }
 
-let xboxController: GamepadController<XboxButtonMapper>
+type XboxButtonMapper = typeof xboxButtonMapper
+type XboxAxesMapper = typeof xboxAxesMapper
+
+function handleStatusUpdated(status: {
+  buttons: Partial<XboxButtonMapper>
+  axes: Partial<XboxAxesMapper>
+}) {
+  console.log(status.buttons)
+  console.log(status.axes.LEFT_THUMBSTICK?.x, status.axes.LEFT_THUMBSTICK?.y)
+}
+
+let xboxController: GamepadController<XboxButtonMapper, XboxAxesMapper>
 
 window.addEventListener('gamepadconnected', ({ gamepad }) => {
   xboxController = new GamepadController(
     gamepad.index,
     xboxButtonMapper,
+    xboxAxesMapper,
     handleStatusUpdated
   )
   xboxController.start()

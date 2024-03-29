@@ -1,6 +1,8 @@
-export type ButtonMapper = Record<string, number>
+type AxisValue = { x: number; y: number }
 
-export default class GamepadButtons<T extends ButtonMapper> {
+export type AxesMapper = Record<string, AxisValue>
+
+export default class GamepadAxes<T extends AxesMapper> {
   private noiseThreshold = 0.15
   private inputDelta = 0.1
 
@@ -12,16 +14,19 @@ export default class GamepadButtons<T extends ButtonMapper> {
     this.initializeStatus()
   }
 
-  public updateStatus(buttons: readonly GamepadButton[]): Partial<T> {
+  public updateStatus(buttons: readonly number[]): Partial<T> {
     const updatedValues = Object.keys(this.indexes).reduce((obj, key) => {
       const lastValue = this.status[key]
-      const newValue = buttons[this.indexes[key]].value
+      const newValue = {
+        x: buttons[this.indexes[key].x],
+        y: buttons[this.indexes[key].y],
+      }
 
       if (this.buttonHasBeenUpdated(lastValue, newValue)) {
         if (this.isOverNoiseThreshold(newValue)) {
           return { ...obj, [key]: newValue }
         }
-        return { ...obj, [key]: 0 }
+        return { ...obj, [key]: { x: 0, y: 0 } }
       }
       return obj
     }, {} as Partial<T>)
@@ -31,19 +36,10 @@ export default class GamepadButtons<T extends ButtonMapper> {
     return updatedValues
   }
 
-  /**
-    - Si ya estaba presionando el botón (lastValueIsOverNoiseThreshold = T),
-      entonces solo actualiza si el delta es mayor.
-    - Sino, actualiza cuando el nuevo valor supera el umbral de ruido.
-
-    | lastValueIsOverNoiseThreshold | newValueIsOverNoiseThreshold | isOverInputDelta | result |
-    | :---------------------------: | :--------------------------: | :--------------: | :----: |
-    |               F               |              F               |        X         | **F**  |
-    |               F               |              T               |        X         | **T**  |
-    |               T               |              X               |        F         | **F**  |
-    |               T               |              X               |        T         | **T**  |
-  */
-  private buttonHasBeenUpdated(lastValue: number, newValue: number): boolean {
+  private buttonHasBeenUpdated(
+    lastValue: AxisValue,
+    newValue: AxisValue
+  ): boolean {
     if (this.isOverNoiseThreshold(lastValue)) {
       return this.isOverInputDelta(lastValue, newValue)
     } else {
@@ -51,17 +47,43 @@ export default class GamepadButtons<T extends ButtonMapper> {
     }
   }
 
-  private isOverNoiseThreshold(value: number): boolean {
-    return value >= this.noiseThreshold
+  private isOverNoiseThreshold(value: AxisValue): boolean {
+    const absX = Math.abs(value.x)
+    const absY = Math.abs(value.y)
+
+    return (
+      absX > this.noiseThreshold ||
+      absY > this.noiseThreshold ||
+      absX + absY > this.noiseThreshold
+    )
   }
 
-  private isOverInputDelta(lastValue: number, newValue: number): boolean {
-    return Math.abs(newValue - lastValue) >= this.inputDelta
+  private isOverInputDelta(lastValue: AxisValue, newValue: AxisValue): boolean {
+    return (
+      Math.abs(newValue.x - lastValue.x) >= this.inputDelta ||
+      Math.abs(newValue.y - lastValue.y) >= this.inputDelta
+    )
+    
+    // return (
+    //   Math.abs(Math.abs(newValue.x) - Math.abs(lastValue.x)) >= this.inputDelta ||
+    //   Math.abs(Math.abs(newValue.y) - Math.abs(lastValue.y)) >= this.inputDelta
+    // )
+
+    // const absXLast = Math.abs(lastValue.x)
+    // const absYLast = Math.abs(lastValue.y)
+    // const absXNew = Math.abs(newValue.x)
+    // const absYNew = Math.abs(newValue.y)
+
+    // return (
+    //   Math.abs(absXNew - absXLast) >= this.inputDelta ||
+    //   Math.abs(absYNew - absYLast) >= this.inputDelta ||
+    //   Math.abs(absXNew + absYNew - (absYLast + absYLast)) >= this.inputDelta
+    // )
   }
 
   private initializeStatus(): void {
     this.status = Object.keys(this.indexes).reduce(
-      (obj, key) => ({ ...obj, [key]: 0 }),
+      (obj, key) => ({ ...obj, [key]: { x: 0, y: 0 } }),
       {} as T
     )
   }
