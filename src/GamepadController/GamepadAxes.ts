@@ -63,22 +63,6 @@ export default class GamepadAxes<T extends AxesMapper> {
       Math.abs(newValue.x - lastValue.x) >= this.inputDelta ||
       Math.abs(newValue.y - lastValue.y) >= this.inputDelta
     )
-    
-    // return (
-    //   Math.abs(Math.abs(newValue.x) - Math.abs(lastValue.x)) >= this.inputDelta ||
-    //   Math.abs(Math.abs(newValue.y) - Math.abs(lastValue.y)) >= this.inputDelta
-    // )
-
-    // const absXLast = Math.abs(lastValue.x)
-    // const absYLast = Math.abs(lastValue.y)
-    // const absXNew = Math.abs(newValue.x)
-    // const absYNew = Math.abs(newValue.y)
-
-    // return (
-    //   Math.abs(absXNew - absXLast) >= this.inputDelta ||
-    //   Math.abs(absYNew - absYLast) >= this.inputDelta ||
-    //   Math.abs(absXNew + absYNew - (absYLast + absYLast)) >= this.inputDelta
-    // )
   }
 
   private initializeStatus(): void {

@@ -33,7 +33,9 @@ function handleStatusUpdated(status: {
   axes: Partial<XboxAxesMapper>
 }) {
   console.log(status.buttons)
-  console.log(status.axes.LEFT_THUMBSTICK?.x, status.axes.LEFT_THUMBSTICK?.y)
+  console.log('LEFT_THUMBSTICK', status.axes.LEFT_THUMBSTICK ?? null)
+  console.log('RIGHT_THUMBSTICK', status.axes.RIGHT_THUMBSTICK ?? null)
+  console.log('\n\n')
 }
 
 let xboxController: GamepadController<XboxButtonMapper, XboxAxesMapper>
