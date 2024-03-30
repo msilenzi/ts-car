@@ -1,7 +1,10 @@
 import GamepadAxes, { AxesMapper } from './GamepadAxes'
 import GamepadButtons, { ButtonMapper } from './GamepadButtons'
 
-type StatusUpdatedHandler<T, U> = (status: {buttons: Partial<T>, axes: Partial<U>}) => void
+type StatusUpdatedHandler<T, U> = (status: {
+  buttons: Partial<T>
+  axes: Partial<U>
+}) => void
 
 export default class GamepadController<
   T extends ButtonMapper,
@@ -34,8 +37,10 @@ export default class GamepadController<
       const gamepad = navigator.getGamepads()[this.gamepadIndex]!
 
       const updatedStatus = {
-        buttons: this.buttons.updateStatus(gamepad.buttons),
-        axes: this.axes.updateStatus(gamepad.axes)
+        buttons: this.buttons.updateStatus(
+          gamepad.buttons.map(({ value }) => value)
+        ),
+        axes: this.axes.updateStatus(gamepad.axes),
       }
 
       if (
