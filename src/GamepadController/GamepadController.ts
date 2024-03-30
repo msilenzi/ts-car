@@ -40,7 +40,7 @@ export default class GamepadController<
         buttons: this.buttons.updateStatus(
           gamepad.buttons.map(({ value }) => value)
         ),
-        axes: this.axes.updateStatus(gamepad.axes),
+        axes: this.axes.updateStatus([...gamepad.axes]),
       }
 
       if (
