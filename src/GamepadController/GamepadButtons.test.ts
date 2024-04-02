@@ -148,13 +148,13 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     expect(() => {
       gamepadButtons.setNoiseThreshold(-0.5)
     }).toThrowError(
-      'noiseThreshold should be a value greater than zero and less than one.'
+      'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
     )
 
     expect(() => {
       gamepadButtons.setNoiseThreshold(1.5)
     }).toThrowError(
-      'noiseThreshold should be a value greater than zero and less than one.'
+      'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
     )
 
     expect(gamepadButtons.getNoiseThreshold()).toBe(0.5)
@@ -168,13 +168,13 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     expect(() => {
       gamepadButtons.setInputDelta(-0.5)
     }).toThrowError(
-      'inputDelta should be a value greater than zero and less than one.'
+      'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
     )
 
     expect(() => {
       gamepadButtons.setInputDelta(1.5)
     }).toThrowError(
-      'inputDelta should be a value greater than zero and less than one.'
+      'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
     )
 
     expect(gamepadButtons.getInputDelta()).toBe(0.5)

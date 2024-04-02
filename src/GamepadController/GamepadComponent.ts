@@ -110,19 +110,19 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
    * - Si ya estaba siendo accionada la entrada
    * (`this.isOverNoiseThreshold(lastValue) === true`), entonces retorna si el delta es mayor
    * - Sino, retorna si el nuevo valor supera el umbral de ruido.
-   * 
+   *
    * | isOverNoiseThreshold(lastValue) | isOverNoiseThreshold(newValue) | isOverInputDelta | result |
    * | :-----------------------------: | :----------------------------: | :--------------: | :----: |
    * |                F                |               F                |        X         | **F**  |
    * |                F                |               T                |        X         | **T**  |
    * |                T                |               X                |        F         | **F**  |
    * |                T                |               X                |        T         | **T**  |
-   * 
+   *
    * @private
    * @param {T} lastValue Valor anterior del componente.
    * @param {T} newValue Nuevo valor del componente.
    * @returns {boolean} `true` si el valor ha sido actualizado, `false` en caso contrario.
-   * 
+   *
    */
   private hasBeenUpdated(lastValue: T, newValue: T): boolean {
     if (this.isOverNoiseThreshold(lastValue)) {
@@ -163,10 +163,15 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
     return this.noiseThreshold
   }
 
+  /**
+   * Establece el umbral de ruido para determinar si un cambio en la entrada es significativo.
+   * @param {number} noiseThreshold Umbral de ruido a establecer.
+   * @throws {RangeError} Si el umbral de ruido está fuera del rango válido (entre 0 y 1).
+   */
   public setNoiseThreshold(noiseThreshold: number): void {
     if (noiseThreshold < 0 || noiseThreshold > 1) {
-      throw new Error(
-        'noiseThreshold should be a value greater than zero and less than one.'
+      throw new RangeError(
+        'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
       )
     }
     this.noiseThreshold = noiseThreshold
@@ -176,10 +181,15 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
     return this.inputDelta
   }
 
+  /**
+   * Establece el delta de entrada para determinar si un cambio en la entrada es significativo.
+   * @param {number} inputDelta Delta de entrada a establecer.
+   * @throws {RangeError} Si el delta de entrada está fuera del rango válido (entre 0 y 1).
+   */
   public setInputDelta(inputDelta: number): void {
     if (inputDelta < 0 || inputDelta > 1) {
-      throw new Error(
-        'inputDelta should be a value greater than zero and less than one.'
+      throw new RangeError(
+        'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
       )
     }
     this.inputDelta = inputDelta
