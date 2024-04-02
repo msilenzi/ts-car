@@ -9,7 +9,7 @@ export default class GamepadButtons<
     return newValues[this.getIndex(key)]
   }
 
-  protected initializeItem(): number {
+  protected initializeInput(): number {
     return 0
   }
 

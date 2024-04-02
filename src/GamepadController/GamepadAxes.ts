@@ -14,7 +14,7 @@ export default class GamepadAxes<T extends AxesMapper> extends GamepadComponent<
     }
   }
 
-  protected initializeItem(): AxisValue {
+  protected initializeInput(): AxisValue {
     return { x: 0, y: 0 }
   }
 

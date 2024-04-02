@@ -60,7 +60,7 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
         }
         // Guarda el valor inicial si no supera el umbral de ruido
         // (se dejó de accionar una entrada).
-        return { ...obj, [key]: this.initializeItem() }
+        return { ...obj, [key]: this.initializeInput() }
       }
 
       // Retorna el objeto sin cambios si el valor no ha sido actualizado significativamente.
@@ -86,7 +86,7 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
    * @abstract
    * @returns {T} Nuevo valor inicial de la entrada.
    */
-  protected abstract initializeItem(): T
+  protected abstract initializeInput(): T
 
   /**
    * Determina si un valor supera el umbral de ruido.
@@ -138,7 +138,7 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
    */
   private initializeStatus(): void {
     this.status = Object.keys(this.indexes).reduce(
-      (obj, key) => ({ ...obj, [key]: this.initializeItem() }),
+      (obj, key) => ({ ...obj, [key]: this.initializeInput() }),
       {} as U
     )
   }
