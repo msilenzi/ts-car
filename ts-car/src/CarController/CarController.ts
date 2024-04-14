@@ -7,10 +7,7 @@ type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
 type CarButtonMapper = { adelante: number; atras: number }
 type CarAxesMapper = { direccion: { x: number } }
 
-export type CarMapper = {
-  buttons: CarButtonMapper,
-  axes: CarAxesMapper
-}
+export type CarMapper = { buttons: CarButtonMapper, axes: CarAxesMapper }
 
 export default class CarController extends GamepadController<
   CarButtonMapper,

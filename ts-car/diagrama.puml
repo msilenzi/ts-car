@@ -1,13 +1,20 @@
 @startuml
 
-abstract class GamepadComponent<T, U extends Record<string, T>> {
-  - noiseThreshold: number = 0.15
-  - inputDelta: number = 0.1
+abstract class GamepadComponent<T, U extends Record<string, T>> <<abstract>> {
+  - noiseThreshold: number
+  - inputDelta: number
   - indexes: U
   - status: U
 
   + constructor(indexes: U)
-  + updateStatus(newValues: number[]): Partial<U>
+  + updateStatus(newValues: number[]): Partial~<U>
+  # {abstract} <<abstract>> getNewValue(key: keyof U, newValues: number[]): T
+  # {abstract} <<abstract>> initializeInput(): T
+  # {abstract} <<abstract>> isOverNoiseThreshold(value: T): boolean
+  # {abstract} <<abstract>> isOverInputDelta(lastValue: T, newValue: T): boolean
+  - hasBeenUpdated(lastValue: T, newValue: T): boolean
+  - initializeStatus(): void
+  + stop(): void
   + getStatus(): U
   + getIndexes(): U
   + getIndex(key: keyof U): T
@@ -15,35 +22,97 @@ abstract class GamepadComponent<T, U extends Record<string, T>> {
   + setNoiseThreshold(noiseThreshold: number): void
   + getInputDelta(): number
   + setInputDelta(inputDelta: number): void
-  - hasBeenUpdated(lastValue: T, newValue: T): boolean
-  # abstract getNewValue(key: keyof U, newValues: number[]): T
-  # abstract initializeInput(): T
-  # abstract isOverNoiseThreshold(value: T): boolean
-  # abstract isOverInputDelta(lastValue: T, newValue: T): boolean
 }
 
-class GamepadAxes<T extends AxesMapper> extends GamepadComponent {
+
+class GamepadAxes<T extends AxesMapper> {
   # getNewValue(key: keyof T, newValues: number[]): AxisValue
   # initializeInput(): AxisValue
   # isOverNoiseThreshold(value: AxisValue): boolean
   # isOverInputDelta(lastValue: AxisValue, newValue: AxisValue): boolean
 }
 
-class GamepadButtons<T extends ButtonMapper> extends GamepadComponent {
+note left of GamepadAxes
+  type AxisValue = { x?: number; y?: number }
+  type AxesMapper = Record<string, AxisValue>
+end note
+
+
+class GamepadButtons<T extends ButtonMapper> {
   # getNewValue(key: keyof T, newValues: number[]): number
   # initializeInput(): number
   # isOverNoiseThreshold(value: number): boolean
   # isOverInputDelta(lastValue: number, newValue: number): boolean
 }
 
-class GamepadController<T extends ButtonMapper,U extends AxesMapper> {
+note right of GamepadButtons
+  type ButtonMapper = Record<string, number>
+end note
+
+
+abstract class GamepadController<T extends ButtonMapper, U extends AxesMapper> <<abstract>> {
   - pollIntervalMs: number
   - interval: number
   - readonly gamepadIndex: number
-  - handleStatusUpdated: StatusUpdatedHandler<T, U>
+
+  + constructor(gamepadIndex: number, gamepadButtons: GamepadButtons<T>,gamepadAxes: GamepadAxes~<U>)
+  + start(): void
+  + stop(): void
+  + getStatus(): { buttons: T; axes: U }
+  + {abstract} <<abstract>> handleStatusUpdated(status: { buttons: Partial<T>, axes: Partial~<U> }): void
 }
 
-GamepadAxes <-- GamepadController : axes
-GamepadButtons <-- GamepadController : buttons
+
+class CarController {
+  - lastInstruction: Instructions
+  
+  + constructor(gamepadIndex: number, carMapper: CarMapper)
+  + handleStatusUpdated(): void
+}
+
+note right of CarController
+  type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
+
+  type CarButtonMapper = { adelante: number; atras: number }
+  type CarAxesMapper = { direccion: { x: number } }
+
+  type CarMapper = { buttons: CarButtonMapper, axes: CarAxesMapper }
+end note
+
+
+class WheelCarController {
+  + constructor(gamepadIndex: number)
+}
+
+note left of WheelCarController
+  const wheelCarMapper: CarMapper = {
+    buttons: { adelante: 5, atras: 4 },
+    axes: { direccion: { x: 0 } },
+  }
+end note
+
+
+class XboxCarController {
+  + constructor(gamepadIndex: number)
+}
+
+note right of XboxCarController
+  const xboxCarMapper: CarMapper = {
+    buttons: { adelante: 7, atras: 6 },
+    axes: { direccion: { x: 0 } },
+  }
+end note
+
+
+GamepadComponent <|-- GamepadAxes : - GamepadComponent<AxisValue, T>
+GamepadComponent <|-- GamepadButtons: - GamepadComponent<number, T>
+
+GamepadAxes    <-- GamepadController : axes
+GamepadButtons <-- GamepadController: buttons
+
+GamepadController <|-- CarController : GamepadController<CarButtonMapper,CarAxesMapper>
+
+CarController <|-- WheelCarController
+CarController <|-- XboxCarController
 
 @enduml
