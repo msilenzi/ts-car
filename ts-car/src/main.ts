@@ -1,5 +1,5 @@
-import CarController from 'mappers/CarController'
-import XboxCarController from 'mappers/XboxCarController'
+import CarController from 'CarController/CarController'
+import XboxCarController from 'CarController/XboxCarController'
 
 let carController: CarController | null
 
