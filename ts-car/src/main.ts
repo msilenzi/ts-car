@@ -1,18 +1,11 @@
-import GamepadController from 'GamepadController/GamepadController'
-import {
-  WheelAxesMapper,
-  WheelButtonMapper,
-  wheelAxesMapper,
-  wheelButtonMapper,
-} from 'mappers/wheelMapper'
+import { WheelGamepad, createWheelGamepad } from 'mappers/wheelMapper'
 
 type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
 
 const URL = 'http://192.168.1.109:1880'
 
 let lastInstruction: Instructions
-
-let wheelController: GamepadController<WheelButtonMapper, WheelAxesMapper>
+let wheelController: WheelGamepad
 
 function handleStatusUpdated() {
   const { direccion } = wheelController.getStatus().axes
@@ -38,12 +31,7 @@ function handleStatusUpdated() {
 }
 
 window.addEventListener('gamepadconnected', ({ gamepad }) => {
-  wheelController = new GamepadController(
-    gamepad.index,
-    wheelButtonMapper,
-    wheelAxesMapper,
-    handleStatusUpdated
-  )
+  wheelController = createWheelGamepad(gamepad.index, handleStatusUpdated)
 
   wheelController.start()
 })

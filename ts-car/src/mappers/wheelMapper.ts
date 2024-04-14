@@ -1,11 +1,31 @@
-export const wheelButtonMapper = {
+import GamepadAxes from 'GamepadController/GamepadAxes'
+import GamepadButtons from 'GamepadController/GamepadButtons'
+import GamepadController, {
+  StatusUpdatedHandler,
+} from 'GamepadController/GamepadController'
+
+const wheelButtonMapper = {
   adelante: 5,
   atras: 4,
 }
 
-export const wheelAxesMapper = {
-  direccion: {x: 0},
+const wheelAxesMapper = {
+  direccion: { x: 0 },
 }
 
-export type WheelButtonMapper = typeof wheelButtonMapper
-export type WheelAxesMapper = typeof wheelAxesMapper
+type WheelButtonMapper = typeof wheelButtonMapper
+type WheelAxesMapper = typeof wheelAxesMapper
+
+export type WheelGamepad = GamepadController<WheelButtonMapper, WheelAxesMapper>
+
+export function createWheelGamepad(
+  gamepadIndex: number,
+  handleStatusUpdated: StatusUpdatedHandler<WheelButtonMapper, WheelAxesMapper>
+): WheelGamepad {
+  return new GamepadController(
+    gamepadIndex,
+    new GamepadButtons(wheelButtonMapper),
+    new GamepadAxes(wheelAxesMapper),
+    handleStatusUpdated
+  )
+}

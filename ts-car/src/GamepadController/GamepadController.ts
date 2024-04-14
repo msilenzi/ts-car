@@ -1,7 +1,7 @@
 import GamepadAxes, { AxesMapper } from './GamepadAxes'
 import GamepadButtons, { ButtonMapper } from './GamepadButtons'
 
-type StatusUpdatedHandler<T, U> = (status: {
+export type StatusUpdatedHandler<T, U> = (status: {
   buttons: Partial<T>
   axes: Partial<U>
 }) => void
@@ -19,16 +19,16 @@ export default class GamepadController<
 
   constructor(
     gamepadIndex: number,
-    buttonMapper: T,
-    axesMapper: U,
+    gamepadButtons: GamepadButtons<T>,
+    gamepadAxes: GamepadAxes<U>,
     handleStatusUpdated: StatusUpdatedHandler<T, U>
   ) {
     this.pollIntervalMs = 50
     this.interval = 0
 
     this.gamepadIndex = gamepadIndex
-    this.buttons = new GamepadButtons(buttonMapper)
-    this.axes = new GamepadAxes(axesMapper)
+    this.buttons = gamepadButtons
+    this.axes = gamepadAxes
     this.handleStatusUpdated = handleStatusUpdated
   }
 
