@@ -143,6 +143,14 @@ export default abstract class GamepadComponent<T, U extends Record<string, T>> {
     )
   }
 
+  /**
+   * Establece todos los valores del estado a su valor inicial.
+   * @public
+   */
+  public stop(): void {
+    this.initializeStatus()
+  }
+
   //
   // Getters y setters
   //

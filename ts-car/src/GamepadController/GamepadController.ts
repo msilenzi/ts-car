@@ -55,7 +55,8 @@ export default class GamepadController<
   public stop(): void {
     if (this.interval !== 0) {
       clearInterval(this.interval)
-      // Disparar handleStatusUpdated con todos los valores en 0
+      this.buttons.stop()
+      this.axes.stop()
     }
   }
 
