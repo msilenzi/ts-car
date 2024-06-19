@@ -1,4 +1,4 @@
-import { CarMapper } from './BasicCarController'
+import { CarMapper } from './AbstractCarController'
 
 export const xboxCarMapper: CarMapper = {
   buttons: { adelante: 7, atras: 6 },

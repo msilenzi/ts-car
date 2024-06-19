@@ -1,33 +1,22 @@
-import GamepadAxes from 'GamepadController/GamepadAxes';
-import GamepadButtons from 'GamepadController/GamepadButtons';
-import GamepadController from 'GamepadController/GamepadController'
+import AbstractCarController, {
+  CarMapper,
+  Instructions,
+} from './AbstractCarController'
 
-type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
-
-type CarButtonMapper = { adelante: number; atras: number }
-type CarAxesMapper = { direccion: { x: number } }
-
-export type CarMapper = { buttons: CarButtonMapper, axes: CarAxesMapper }
-
-export default class BasicCarController extends GamepadController<
-  CarButtonMapper,
-  CarAxesMapper
-> {
+export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
-  
-  constructor(gamepadIndex: number, carMapper: CarMapper) {
-    super(
-      gamepadIndex,
-      new GamepadButtons(carMapper.buttons),
-      new GamepadAxes(carMapper.axes),
-    )
+  private CAR_URL: string
+
+  constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
+    super(gamepadIndex, carMapper)
     this.lastInstruction = 'parar'
+    this.CAR_URL = CAR_URL
   }
 
   public handleStatusUpdated(): void {
     const { direccion } = this.getStatus().axes
     const { adelante, atras } = this.getStatus().buttons
-    
+
     let newInstruction: Instructions = 'parar'
 
     if (direccion.x <= -0.5) {
@@ -39,9 +28,9 @@ export default class BasicCarController extends GamepadController<
     } else if (atras >= 0.5) {
       newInstruction = 'atras'
     }
-  
+
     if (newInstruction !== this.lastInstruction) {
-      fetch(`${URL}/${newInstruction}`)
+      fetch(`${this.CAR_URL}/${newInstruction}`)
       this.lastInstruction = newInstruction
       console.log(newInstruction)
     }
