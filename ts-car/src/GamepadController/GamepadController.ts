@@ -25,7 +25,7 @@ export default abstract class GamepadController<
   }
 
   public start(): void {
-    setInterval(() => {
+    this.interval = setInterval(() => {
       const gamepad = navigator.getGamepads()[this.gamepadIndex]!
 
       const updatedStatus = {
