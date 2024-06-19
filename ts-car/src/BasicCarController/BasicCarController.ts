@@ -9,7 +9,7 @@ type CarAxesMapper = { direccion: { x: number } }
 
 export type CarMapper = { buttons: CarButtonMapper, axes: CarAxesMapper }
 
-export default class CarController extends GamepadController<
+export default class BasicCarController extends GamepadController<
   CarButtonMapper,
   CarAxesMapper
 > {

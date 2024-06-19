@@ -1,7 +1,7 @@
-import CarController from 'CarController/CarController'
-import XboxCarController from 'CarController/XboxCarController'
+import BasicCarController from 'BasicCarController/BasicCarController'
+import XboxCarController from 'BasicCarController/XboxBasicCarController'
 
-let carController: CarController | null
+let carController: BasicCarController | null
 
 window.addEventListener('gamepadconnected', ({ gamepad }) => {
   carController = new XboxCarController(gamepad.index)
@@ -12,3 +12,4 @@ window.addEventListener('gamepaddisconnected', () => {
   carController?.stop()
   carController = null
 })
+
