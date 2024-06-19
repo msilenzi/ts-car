@@ -2,8 +2,8 @@ import GamepadAxes from 'GamepadController/GamepadAxes'
 import GamepadButtons from 'GamepadController/GamepadButtons'
 import GamepadController from 'GamepadController/GamepadController'
 
-type CarButtonMapper = { adelante: number; atras: number }
-type CarAxesMapper = { direccion: { x: number } }
+export type CarButtonMapper = { adelante: number; atras: number }
+export type CarAxesMapper = { direccion: { x: number } }
 
 export type CarMapper = { buttons: CarButtonMapper; axes: CarAxesMapper }
 
@@ -25,6 +25,4 @@ export default abstract class AbstractCarController extends GamepadController<
       new GamepadAxes(carMapper.axes)
     )
   }
-
-  public abstract handleStatusUpdated(): void
 }
