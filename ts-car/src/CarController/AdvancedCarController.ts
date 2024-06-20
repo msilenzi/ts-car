@@ -16,6 +16,13 @@ export default class AdvancedCarController extends AbstractCarController {
     buttons: Partial<CarButtonMapper>
     axes: Partial<CarAxesMapper>
   }): void {
-    console.log(JSON.stringify(status, null, 2))
+    // console.log(JSON.stringify(status, null, 2))
+    console.log(JSON.stringify(this.getStatus(), null, 2))
+
+    fetch(`${this.CAR_URL}/control`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(this.getStatus())
+    });
   }
 }

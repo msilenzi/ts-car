@@ -10,11 +10,7 @@ let carController: AbstractCarController | null
 
 window.addEventListener('gamepadconnected', ({ gamepad }) => {
   // carController = new BasicCarController(gamepad.index, xboxCarMapper, CAR_URL)
-  carController = new AdvancedCarController(
-    gamepad.index,
-    xboxCarMapper,
-    CAR_URL
-  )
+  carController = new AdvancedCarController(gamepad.index, xboxCarMapper, CAR_URL)
   carController.start()
 })
 
