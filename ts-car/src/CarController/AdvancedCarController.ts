@@ -1,8 +1,4 @@
-import AbstractCarController, {
-  CarAxesMapper,
-  CarButtonMapper,
-  CarMapper,
-} from './AbstractCarController'
+import AbstractCarController, { CarMapper } from './AbstractCarController'
 
 export default class AdvancedCarController extends AbstractCarController {
   private CAR_URL: string
@@ -12,17 +8,11 @@ export default class AdvancedCarController extends AbstractCarController {
     this.CAR_URL = CAR_URL
   }
 
-  public handleStatusUpdated(status: {
-    buttons: Partial<CarButtonMapper>
-    axes: Partial<CarAxesMapper>
-  }): void {
-    // console.log(JSON.stringify(status, null, 2))
-    console.log(JSON.stringify(this.getStatus(), null, 2))
-
+  public handleStatusUpdated(): void {
     fetch(`${this.CAR_URL}/control`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(this.getStatus())
-    });
+      body: JSON.stringify(this.getStatus()),
+    })
   }
 }
