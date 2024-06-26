@@ -1,7 +1,7 @@
 import AbstractCarController, { CarMapper } from './AbstractCarController'
 
 export default class AdvancedCarController extends AbstractCarController {
-  private CAR_URL: string
+  private readonly CAR_URL: string
 
   constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
     super(gamepadIndex, carMapper)

@@ -18,7 +18,7 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     const indexes = gamepadButtons.getIndexes()
 
     // Verifica que los tipos se definan correctamente
-    // Mas info: https://vitest.dev/guide/testing-types.html#testing-types
+    // Más info: https://vitest.dev/guide/testing-types.html#testing-types
     expectTypeOf(status).toMatchTypeOf<MockButtonsMapper>()
     expectTypeOf(indexes).toMatchTypeOf<MockButtonsMapper>()
 
@@ -108,7 +108,7 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
       ])
 
       // buttonA se suelta completamente superando el delta y buttonB se suelta
-      // ligeramente, de forma que queda por debajo del umbral de ruido pero
+      // ligeramente, de forma que queda por debajo del umbral de ruido, pero
       // no supera el delta, por lo que no se actualiza su estado:
 
       const updatedMockValueB1 =

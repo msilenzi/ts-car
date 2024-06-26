@@ -18,7 +18,7 @@ export default abstract class AbstractCarController extends GamepadController<
   CarButtonMapper,
   CarAxesMapper
 > {
-  constructor(gamepadIndex: number, carMapper: CarMapper) {
+  protected constructor(gamepadIndex: number, carMapper: CarMapper) {
     super(
       gamepadIndex,
       new GamepadButtons(carMapper.buttons),

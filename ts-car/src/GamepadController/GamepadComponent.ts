@@ -1,34 +1,26 @@
 /**
  * Clase abstracta que representa un componente genérico de un gamepad, como los sticks o los botones.
- * @template T Tipo de datos del componente (e.g., AxisValue para los sticks, number para los botones).
+ * @template T Tipo de datos del componente (AxisValue para los sticks, number para los botones).
  * @template U Tipo de mapeo utilizado para indexar las entradas del gamepad.
  */
 export default abstract class GamepadComponent<T, U extends Record<string, T>> {
   /**
    * Umbral de ruido para determinar si un cambio en la entrada es significativo.
-   * @type {number}
-   * @private
    */
   private noiseThreshold = 0.15
 
   /**
    * Delta de entrada para determinar si un cambio en la entrada es significativo.
-   * @type {number}
-   * @private
    */
   private inputDelta = 0.1
 
   /**
    * Índices para mapear las entradas del gamepad a valores específicos.
-   * @type {U}
-   * @private
    */
   private readonly indexes: U
 
   /**
    * Estado actual del componente del gamepad.
-   * @type {U}
-   * @private
    */
   private status!: U
 

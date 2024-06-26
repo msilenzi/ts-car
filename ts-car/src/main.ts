@@ -33,7 +33,7 @@ const $selectController =
 const $selectType = document.querySelector<HTMLSelectElement>('#type')!
 const $selectDriver = document.querySelector<HTMLSelectElement>('#driver')!
 
-const $status = document.querySelector<HTMLSpanElement>('#status')!
+const $status = document.querySelector<HTMLSpanElement>('#connectionStatus')!
 
 let carController: AbstractCarController | null = null
 

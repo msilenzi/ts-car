@@ -5,13 +5,13 @@ export default abstract class GamepadController<
   T extends ButtonMapper,
   U extends AxesMapper,
 > {
-  private pollIntervalMs: number
+  private readonly pollIntervalMs: number
   private interval: number
   private buttons: GamepadButtons<T>
   private axes: GamepadAxes<U>
   private readonly gamepadIndex: number
 
-  constructor(
+  protected constructor(
     gamepadIndex: number,
     gamepadButtons: GamepadButtons<T>,
     gamepadAxes: GamepadAxes<U>
