@@ -1,3 +1,6 @@
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import AbstractCarController from 'CarController/AbstractCarController'
 import AdvancedCarController from 'CarController/AdvancedCarController'
 import BasicCarController from 'CarController/BasicCarController'
