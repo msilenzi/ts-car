@@ -95,6 +95,13 @@ window.addEventListener('DOMContentLoaded', () => {
 $form.addEventListener('submit', (e) => {
   e.preventDefault()
 
+  $form.classList.add('was-validated')
+  if (!$form.checkValidity()) {
+    e.stopPropagation()
+    return;
+  }
+
+  // Detiene el auto si ya estaba conectado
   if (carController !== null) carController.stop()
 
   const ipAddr = $inputIpAddr.value
@@ -125,9 +132,9 @@ window.addEventListener('gamepaddisconnected', () => {
   [x] Hacer que se conecte con la configuración establecida
         [x] Configurar node-red para trabajar con los dos drivers
   [ ] Actualizar estado
-  [ ] Validar formulario
+  [~] Validar formulario
   [ ] Latencia
   [ ] Guardar configuración en localStorage
   [ ] Documentar
-  [ ] Instalar bootstrap en el proyecto y eliminar CDN
+  [x] Instalar bootstrap en el proyecto y eliminar CDN
 */
