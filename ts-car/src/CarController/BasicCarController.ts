@@ -5,12 +5,10 @@ import AbstractCarController, {
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
-  private readonly CAR_URL: string
 
   constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
-    super(gamepadIndex, carMapper)
+    super(gamepadIndex, carMapper, CAR_URL)
     this.lastInstruction = 'parar'
-    this.CAR_URL = CAR_URL
   }
 
   public handleStatusUpdated(): void {

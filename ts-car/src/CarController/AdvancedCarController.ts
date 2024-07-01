@@ -1,11 +1,8 @@
 import AbstractCarController, { CarMapper } from './AbstractCarController'
 
 export default class AdvancedCarController extends AbstractCarController {
-  private readonly CAR_URL: string
-
   constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
-    super(gamepadIndex, carMapper)
-    this.CAR_URL = CAR_URL
+    super(gamepadIndex, carMapper, CAR_URL)
   }
 
   public handleStatusUpdated(): void {
