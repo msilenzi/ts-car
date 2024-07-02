@@ -1,14 +1,15 @@
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+import form from './ui/form.ts'
+import { setStatus } from './ui/status.ts'
+
 import AbstractCarController, {
   CarMapper,
 } from 'CarController/AbstractCarController'
 import AdvancedCarController from 'CarController/AdvancedCarController'
 import BasicCarController from 'CarController/BasicCarController'
-
 import { wheelCarMapper, xboxCarMapper } from 'CarController/mappers'
-import form from './ui/form.ts'
 
 export type TypeOption = {
   displayName: string
@@ -46,8 +47,6 @@ const DRIVERS: DriverOption[] = [
   },
 ]
 
-const $status: HTMLSpanElement = document.querySelector('#connectionStatus')!
-
 let carController: AbstractCarController | null = null
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -55,8 +54,7 @@ window.addEventListener('DOMContentLoaded', () => {
   form.loadTypeOptions(TYPES)
   form.loadDriversOptions(DRIVERS)
 
-  $status.innerText = 'desconectado'
-  $status.className = 'text-danger'
+  setStatus('secondary', 'desconectado')
 })
 
 form.bindOnFinish(({ ipAddress, controllerIndex, typeIndex, driverIndex }) => {
@@ -81,8 +79,8 @@ window.addEventListener('gamepaddisconnected', () => {
 /*
   [x] Hacer que se conecte con la configuración establecida
         [x] Configurar node-red para trabajar con los dos drivers
-  [ ] Actualizar estado
-  [~] Validar formulario
+  [x] Actualizar estado
+  [x] Validar formulario
   [ ] Latencia
   [ ] Guardar configuración en localStorage
   [ ] Documentar
