@@ -49,6 +49,7 @@ export default abstract class GamepadController<
       clearInterval(this.interval)
       this.buttons.stop()
       this.axes.stop()
+      this.handleStatusUpdated(this.getStatus())
     }
   }
 
