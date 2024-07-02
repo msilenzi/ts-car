@@ -1,4 +1,5 @@
 import { DriverOption, TypeOption } from '../main.ts'
+import { setStatus } from './status.ts'
 
 export type FormData = {
   ipAddress: string
@@ -65,14 +66,21 @@ function bindOnFinish(handler: (values: FormData) => void) {
     const formValidiy = $form.checkValidity()
     $form.classList.add('was-validated')
 
-    // Si los inputs son inválidos terminar
+    // Si algún input es inválido terminar
     if (!formValidiy) {
       e.stopPropagation()
       return
     }
 
-    _validateIpAddress()
+    setStatus('warning', 'conectando...')
 
+    if (!(await _isValidIpAddress())) {
+      e.stopPropagation()
+      setStatus('danger', 'no se puedo conectar a la IP ingresada')
+      return
+    }
+
+    setStatus('success', 'conectado')
     handler(_getFormValues())
   })
 }
@@ -86,7 +94,7 @@ function _getFormValues(): FormData {
   }
 }
 
-async function _validateIpAddress(): Promise<boolean> {
+async function _isValidIpAddress(): Promise<boolean> {
   // Si la URL termina con una / se elimina
   if ($inputIpAddr.value.endsWith('/')) {
     $inputIpAddr.value = $inputIpAddr.value.slice(0, -1)
