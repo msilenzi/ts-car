@@ -73,6 +73,11 @@ window.addEventListener('gamepaddisconnected', () => {
   status.setStatus('secondary', 'desconectado')
 })
 
+// Se dispara cuando se cierra/recarga la página
+window.addEventListener('beforeunload', () => {
+  carController?.stop()
+})
+
 /*
   [x] Hacer que se conecte con la configuración establecida
         [x] Configurar node-red para trabajar con los dos drivers
