@@ -8,12 +8,14 @@ export type FormData = {
   driverIndex: number
 }
 
-const $form: HTMLFormElement = document.querySelector('form')!
+const $form: HTMLFormElement = document.querySelector('#formConnect')!
 const $inputIpAddr: HTMLInputElement = document.querySelector('#ipAddress')!
 const $selectController: HTMLSelectElement =
-  document.querySelector<HTMLSelectElement>('#controller')!
+  document.querySelector('#controller')!
 const $selectType: HTMLSelectElement = document.querySelector('#type')!
 const $selectDriver: HTMLSelectElement = document.querySelector('#driver')!
+
+const $btnConnect: HTMLButtonElement = document.querySelector('#connectBtn')!
 
 function loadControllerOptions() {
   const gamepads = navigator.getGamepads()
