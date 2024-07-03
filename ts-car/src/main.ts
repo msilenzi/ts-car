@@ -1,8 +1,8 @@
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-import form from './ui/form.ts'
-import { setStatus } from './ui/status.ts'
+import * as form from './ui/form.ts'
+import * as status from './ui/status.ts'
 
 import AbstractCarController, {
   CarMapper,
@@ -49,13 +49,8 @@ const DRIVERS: DriverOption[] = [
 
 let carController: AbstractCarController | null = null
 
-window.addEventListener('DOMContentLoaded', () => {
-  form.loadControllerOptions()
-  form.loadTypeOptions(TYPES)
-  form.loadDriversOptions(DRIVERS)
 
-  setStatus('secondary', 'desconectado')
-})
+form.initForm(TYPES, DRIVERS)
 
 form.bindOnFinish(({ ipAddress, controllerIndex, typeIndex, driverIndex }) => {
   carController = new DRIVERS[driverIndex].Driver(
@@ -74,6 +69,8 @@ window.addEventListener('gamepaddisconnected', () => {
   form.loadControllerOptions()
   carController?.stop()
   carController = null
+  form.enableSubmit()
+  status.setStatus('secondary', 'desconectado')
 })
 
 /*

@@ -8,6 +8,13 @@ export type FormData = {
   driverIndex: number
 }
 
+let lastSubmited: FormData = {
+  ipAddress: '',
+  controllerIndex: NaN,
+  typeIndex: 0,
+  driverIndex: 0,
+}
+
 const $form: HTMLFormElement = document.querySelector('#formConnect')!
 const $inputIpAddr: HTMLInputElement = document.querySelector('#ipAddress')!
 const $selectController: HTMLSelectElement =
@@ -17,7 +24,7 @@ const $selectDriver: HTMLSelectElement = document.querySelector('#driver')!
 
 const $btnConnect: HTMLButtonElement = document.querySelector('#connectBtn')!
 
-function loadControllerOptions() {
+export function loadControllerOptions() {
   const gamepads = navigator.getGamepads()
 
   $selectController.innerHTML = ''
@@ -40,7 +47,7 @@ function loadControllerOptions() {
   }
 }
 
-function loadTypeOptions(types: TypeOption[]) {
+export function loadTypeOptions(types: TypeOption[]) {
   $selectType.innerHTML = ''
   types.forEach((type, index) => {
     const $option = document.createElement('option')
@@ -50,7 +57,7 @@ function loadTypeOptions(types: TypeOption[]) {
   })
 }
 
-function loadDriversOptions(drivers: DriverOption[]) {
+export function loadDriversOptions(drivers: DriverOption[]) {
   $selectDriver.innerHTML = ''
   drivers.forEach((driver, index) => {
     const $option = document.createElement('option')
@@ -60,7 +67,15 @@ function loadDriversOptions(drivers: DriverOption[]) {
   })
 }
 
-function bindOnFinish(handler: (values: FormData) => void) {
+export function initForm(types: TypeOption[], drivers: DriverOption[]) {
+  loadControllerOptions()
+  loadTypeOptions(types)
+  loadDriversOptions(drivers)
+  $btnConnect.disabled = true
+  setStatus('secondary', 'desconectado')
+}
+
+export function bindOnFinish(handler: (values: FormData) => void) {
   $form.addEventListener('submit', async (e) => {
     e.preventDefault()
 
@@ -82,12 +97,23 @@ function bindOnFinish(handler: (values: FormData) => void) {
       return
     }
 
+    $btnConnect.disabled = true
     setStatus('success', 'conectado')
-    handler(_getFormValues())
+    lastSubmited = _getCurrentFormValues()
+    handler(lastSubmited)
+  })
+
+  $form.addEventListener('input', () => {
+    $btnConnect.disabled =
+      JSON.stringify(_getCurrentFormValues()) === JSON.stringify(lastSubmited)
   })
 }
 
-function _getFormValues(): FormData {
+export function enableSubmit() {
+  $btnConnect.disabled = false
+}
+
+function _getCurrentFormValues(): FormData {
   return {
     ipAddress: $inputIpAddr.value,
     controllerIndex: parseInt($selectController.value),
@@ -117,11 +143,4 @@ async function _isValidIpAddress(): Promise<boolean> {
   } catch (error) {
     return false
   }
-}
-
-export default {
-  loadControllerOptions,
-  loadTypeOptions,
-  loadDriversOptions,
-  bindOnFinish,
 }
