@@ -123,6 +123,8 @@ function _getCurrentFormValues(): FormData {
 }
 
 async function _isValidIpAddress(): Promise<boolean> {
+  $inputIpAddr.value = $inputIpAddr.value.trim()
+
   // Si la URL termina con una / se elimina
   if ($inputIpAddr.value.endsWith('/')) {
     $inputIpAddr.value = $inputIpAddr.value.slice(0, -1)
