@@ -53,6 +53,8 @@ let carController: AbstractCarController | null = null
 form.initForm(TYPES, DRIVERS)
 
 form.bindOnFinish(({ ipAddress, controllerIndex, typeIndex, driverIndex }) => {
+  carController?.stop()
+
   carController = new DRIVERS[driverIndex].Driver(
     controllerIndex,
     TYPES[typeIndex].mapper,
