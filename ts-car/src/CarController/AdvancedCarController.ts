@@ -1,5 +1,6 @@
 import AbstractCarController, { CarMapper } from './AbstractCarController'
 import { setLatency } from '../ui/latency.ts'
+import { setStatus } from '../ui/controllerStatus.ts'
 
 export default class AdvancedCarController extends AbstractCarController {
   constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
@@ -14,6 +15,7 @@ export default class AdvancedCarController extends AbstractCarController {
       body: JSON.stringify(this.getStatus()),
     }).then(() => {
       setLatency(performance.now() - startTime)
+      setStatus(JSON.stringify(this.getStatus(), null, 2))
     })
   }
 }

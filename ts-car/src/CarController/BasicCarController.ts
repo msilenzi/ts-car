@@ -3,6 +3,8 @@ import AbstractCarController, {
   Instructions,
 } from './AbstractCarController'
 import { setLatency } from '../ui/latency.ts'
+import { setStatus } from '../ui/controllerStatus.ts'
+
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
@@ -35,7 +37,7 @@ export default class BasicCarController extends AbstractCarController {
       })
 
       this.lastInstruction = newInstruction
-      console.log(newInstruction)
+      setStatus(newInstruction)
     }
   }
 }
