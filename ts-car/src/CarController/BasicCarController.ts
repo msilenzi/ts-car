@@ -2,6 +2,7 @@ import AbstractCarController, {
   CarMapper,
   Instructions,
 } from './AbstractCarController'
+import { setLatency } from '../ui/latency.ts'
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
@@ -28,7 +29,11 @@ export default class BasicCarController extends AbstractCarController {
     }
 
     if (newInstruction !== this.lastInstruction) {
-      fetch(`${this.CAR_URL}/${newInstruction}`)
+      const startTime = performance.now()
+      fetch(`${this.CAR_URL}/${newInstruction}`).then(() => {
+        setLatency(performance.now() - startTime)
+      })
+
       this.lastInstruction = newInstruction
       console.log(newInstruction)
     }
