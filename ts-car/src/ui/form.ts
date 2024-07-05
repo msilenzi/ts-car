@@ -8,7 +8,7 @@ export type FormData = {
   driverIndex: number
 }
 
-let lastSubmited: FormData = {
+let lastSubmitted: FormData = {
   ipAddress: '',
   controllerIndex: NaN,
   typeIndex: 0,
@@ -80,11 +80,11 @@ export function bindOnFinish(handler: (values: FormData) => void) {
     e.preventDefault()
 
     // Validar formulario
-    const formValidiy = $form.checkValidity()
+    const formValidity = $form.checkValidity()
     $form.classList.add('was-validated')
 
     // Si algún input es inválido terminar
-    if (!formValidiy) {
+    if (!formValidity) {
       e.stopPropagation()
       return
     }
@@ -99,13 +99,13 @@ export function bindOnFinish(handler: (values: FormData) => void) {
 
     $btnConnect.disabled = true
     setStatus('success', 'conectado')
-    lastSubmited = _getCurrentFormValues()
-    handler(lastSubmited)
+    lastSubmitted = _getCurrentFormValues()
+    handler(lastSubmitted)
   })
 
   $form.addEventListener('input', () => {
     $btnConnect.disabled =
-      JSON.stringify(_getCurrentFormValues()) === JSON.stringify(lastSubmited)
+      JSON.stringify(_getCurrentFormValues()) === JSON.stringify(lastSubmitted)
   })
 }
 
@@ -130,7 +130,7 @@ async function _isValidIpAddress(): Promise<boolean> {
     $inputIpAddr.value = $inputIpAddr.value.slice(0, -1)
   }
 
-  // Envía un fetch /parar a la URL ingresada. Si en 1 segundo no responde
+  // Envía un GET /parar a la URL ingresada. Si en 1 segundo no responde
   // cancela la petición y devuelve false:
 
   const controller = new AbortController()
