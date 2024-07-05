@@ -2,7 +2,7 @@ import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import * as form from './ui/form.ts'
-import * as status from './ui/status.ts'
+import * as connectionStatus from './ui/connectionStatus.ts'
 import * as latency from './ui/latency.ts'
 
 import AbstractCarController, {
@@ -75,7 +75,7 @@ window.addEventListener('gamepaddisconnected', () => {
   carController?.stop()
   carController = null
   form.enableSubmit()
-  status.setStatus('secondary', 'desconectado')
+  connectionStatus.setStatus('secondary', 'desconectado')
   latency.setEmptyLatency()
 })
 

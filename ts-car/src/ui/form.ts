@@ -1,5 +1,5 @@
 import { DriverOption, TypeOption } from '../main.ts'
-import { setStatus } from './status.ts'
+import { setStatus } from './connectionStatus.ts'
 
 export type FormData = {
   ipAddress: string
