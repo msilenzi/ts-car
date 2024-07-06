@@ -2,7 +2,12 @@ import GamepadAxes from 'GamepadController/GamepadAxes'
 import GamepadButtons from 'GamepadController/GamepadButtons'
 import GamepadController from 'GamepadController/GamepadController'
 
-export type CarButtonMapper = { adelante: number; atras: number }
+export type CarButtonMapper = {
+  adelante: number
+  atras: number
+  rotarIzq?: number
+  rotarDer?: number
+}
 export type CarAxesMapper = { direccion: { x: number } }
 
 export type CarMapper = { buttons: CarButtonMapper; axes: CarAxesMapper }

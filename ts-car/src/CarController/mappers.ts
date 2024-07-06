@@ -1,7 +1,7 @@
 import { CarMapper } from './AbstractCarController'
 
 export const xboxCarMapper: CarMapper = {
-  buttons: { adelante: 7, atras: 6 },
+  buttons: { adelante: 7, atras: 6, rotarIzq: 4, rotarDer: 5 },
   axes: { direccion: { x: 0 } },
 }
 
