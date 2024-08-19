@@ -12,13 +12,6 @@ export type CarAxesMapper = { direccion: { x: number } }
 
 export type CarMapper = { buttons: CarButtonMapper; axes: CarAxesMapper }
 
-export type Instructions =
-  | 'adelante'
-  | 'atras'
-  | 'parar'
-  | 'derecha'
-  | 'izquierda'
-
 export default abstract class AbstractCarController extends GamepadController<
   CarButtonMapper,
   CarAxesMapper

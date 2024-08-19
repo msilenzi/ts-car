@@ -1,10 +1,13 @@
-import AbstractCarController, {
-  CarMapper,
-  Instructions,
-} from './AbstractCarController'
+import AbstractCarController, { CarMapper } from './AbstractCarController'
 import { setLatency } from '../ui/latency.ts'
 import { setStatus } from '../ui/controllerStatus.ts'
 
+type Instructions =
+  | 'adelante'
+  | 'atras'
+  | 'parar'
+  | 'derecha'
+  | 'izquierda'
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
