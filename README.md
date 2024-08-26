@@ -3,7 +3,7 @@
 Dentro de este repositorio hay dos proyectos:
 
 - **gamepadtest-master:** es una página web HTML muy simple que puede usarse para ver fácilmente los índices de los botones del control conectado.
-- **ts-car:**
+- **ts-car:** contiene todo el código para controlar al robot. Para ver más detalles leer el README.md de la carpeta.
 
 ## Gamepad API
 
