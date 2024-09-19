@@ -12,27 +12,31 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     buttonB: 2,
   }
 
-  test('debe inicializarse correctamente', () => {
-    const gamepadButtons = new GamepadButtons(buttonMapper)
-    const status = gamepadButtons.getStatus()
-    const indexes = gamepadButtons.getIndexes()
+  describe('constructor', () => {
+    test('debe inicializarse correctamente', () => {
+      const gamepadButtons = new GamepadButtons(buttonMapper)
+      const status = gamepadButtons.getStatus()
+      const indexes = gamepadButtons.getIndexes()
 
-    // Verifica que los tipos se definan correctamente
-    // Más info: https://vitest.dev/guide/testing-types.html#testing-types
-    expectTypeOf(status).toMatchTypeOf<MockButtonsMapper>()
-    expectTypeOf(indexes).toMatchTypeOf<MockButtonsMapper>()
+      // Verifica que los tipos se definan correctamente
+      // Más info: https://vitest.dev/guide/testing-types.html#testing-types
+      expectTypeOf(status).toMatchTypeOf<MockButtonsMapper>()
+      expectTypeOf(indexes).toMatchTypeOf<MockButtonsMapper>()
 
-    // Verifica que el estado se inicialice correctamente
-    Object.values(status).forEach((value) => {
-      expectTypeOf(value).toMatchTypeOf<number>()
-      expect(value).toBe(0)
+      // Verifica que el estado se inicialice correctamente
+      Object.values(status).forEach((value) => {
+        expectTypeOf(value).toMatchTypeOf<number>()
+        expect(value).toBe(0)
+      })
+
+      // Verifica que los índices se asignen correctamente
+      expect(indexes).toStrictEqual(buttonMapper)
     })
-
-    // Verifica que los índices se asignen correctamente
-    expect(indexes).toStrictEqual(buttonMapper)
   })
 
-  describe.concurrent('pruebas sobre el método updateStatus', () => {
+
+
+  describe.concurrent('updateStatus', () => {
     test('debe actualizar el estado correctamente', () => {
       const gamepadButtons = new GamepadButtons(buttonMapper)
 
@@ -139,7 +143,7 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
   })
 
-  describe('pruebas sobre stop', () => {
+  describe('stop', () => {
     test('debe establecer los valores iniciales correctamente', () => {
       const gamepadButtons = new GamepadButtons(buttonMapper)
 
@@ -168,7 +172,7 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
   })
 
-  describe('pruebas sobre setNoiseThreshold', () => {
+  describe('setNoiseThreshold', () => {
     test('debe actualizar el valor de noiseThreshold correctamente', () => {
       const gamepadButtons = new GamepadButtons(buttonMapper)
 
@@ -190,7 +194,7 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
   })
 
-  describe('pruebas sobre setInputDelta', () => {
+  describe('setInputDelta', () => {
     test('debe actualizar el valor de inputDelta correctamente', () => {
       const gamepadButtons = new GamepadButtons(buttonMapper)
 
