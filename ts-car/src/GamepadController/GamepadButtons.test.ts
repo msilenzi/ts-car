@@ -1,7 +1,7 @@
-import { describe, expect, expectTypeOf, test } from 'vitest'
+import { beforeEach, describe, expect, expectTypeOf, test } from 'vitest'
 import GamepadButtons from './GamepadButtons'
 
-describe.concurrent('Pruebas para GamepadButtons', () => {
+describe('Pruebas para GamepadButtons', () => {
   type MockButtonsMapper = {
     buttonA: number
     buttonB: number
@@ -12,9 +12,14 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     buttonB: 2,
   }
 
+  let gamepadButtons: GamepadButtons<MockButtonsMapper>;
+
+  beforeEach(() => {
+    gamepadButtons = new GamepadButtons(buttonMapper)
+  })
+
   describe('constructor', () => {
     test('debe inicializarse correctamente', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
       const status = gamepadButtons.getStatus()
       const indexes = gamepadButtons.getIndexes()
 
@@ -36,10 +41,8 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
 
 
 
-  describe.concurrent('updateStatus', () => {
+  describe('updateStatus', () => {
     test('debe actualizar el estado correctamente', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
-
       const mockButtons: number[] = [
         0, // buttonA
         1, // no_se_usa
@@ -56,7 +59,6 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
 
     test('solo debe actualizar el estado de los botones que están por encima del umbral de ruido', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
       const mockValue = gamepadButtons.getNoiseThreshold() * 0.5
       const updatedStatus = gamepadButtons.updateStatus([
         mockValue, // buttonA
@@ -72,7 +74,6 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
 
     test('solo debe actualizar el estado de los botones que cambiaron por encima del delta', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
       gamepadButtons.updateStatus([
         0.5, // buttonA
         0, // no_se_usa
@@ -96,8 +97,6 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
 
     test('debe actualizar el estado de los botones que quedaron debajo del umbral de ruido y delta', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
-
       // buttonA y buttonB se presionan. buttonB se presiona apenas sobre el
       // límite de ruido:
 
@@ -174,8 +173,6 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
 
   describe('setNoiseThreshold', () => {
     test('debe actualizar el valor de noiseThreshold correctamente', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
-
       gamepadButtons.setNoiseThreshold(0.5)
 
       expect(() => {
@@ -196,8 +193,6 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
 
   describe('setInputDelta', () => {
     test('debe actualizar el valor de inputDelta correctamente', () => {
-      const gamepadButtons = new GamepadButtons(buttonMapper)
-
       gamepadButtons.setInputDelta(0.5)
 
       expect(() => {
