@@ -115,21 +115,20 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
         gamepadButtons.getNoiseThreshold() -
         gamepadButtons.getInputDelta() * 0.2
 
-      expect(
-        gamepadButtons.updateStatus([
-          0, // buttonA
-          0, // no_se_usa
-          updatedMockValueB1, // buttonB
-        ])
-      ).toStrictEqual({
-        buttonA: 0,
-      })
+      const updatedStatus = gamepadButtons.updateStatus([
+        0, // buttonA
+        0, // no_se_usa
+        updatedMockValueB1, // buttonB
+      ])
+
+      expect(updatedStatus).toStrictEqual({ buttonA: 0 })
 
       // Se suelta un poco más a buttonB de forma que queda por debajo del
       // umbral de ruido y supera al delta. Se actualiza su estado:
 
       const updatedMockValueB2 =
         gamepadButtons.getNoiseThreshold() - gamepadButtons.getInputDelta()
+
       expect(
         gamepadButtons.updateStatus([
           0, // buttonA
@@ -140,43 +139,76 @@ describe.concurrent('Pruebas para GamepadButtons', () => {
     })
   })
 
-  test('debe actualizar el valor de noiseThreshold correctamente', () => {
-    const gamepadButtons = new GamepadButtons(buttonMapper)
+  describe('pruebas sobre stop', () => {
+    test('debe establecer los valores iniciales correctamente', () => {
+      const gamepadButtons = new GamepadButtons(buttonMapper)
 
-    gamepadButtons.setNoiseThreshold(0.5)
+      // Modificar el estado del control
+      const mockButtons: number[] = [
+        1, // buttonA
+        1, // no_se_usa
+        1, // buttonB
+      ]
+      gamepadButtons.updateStatus(mockButtons)
 
-    expect(() => {
-      gamepadButtons.setNoiseThreshold(-0.5)
-    }).toThrowError(
-      'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
-    )
+      // Verificar que se actualizaron correctamente
+      expect(gamepadButtons.getStatus()).toStrictEqual({
+        buttonA: 1,
+        buttonB: 1,
+      })
 
-    expect(() => {
-      gamepadButtons.setNoiseThreshold(1.5)
-    }).toThrowError(
-      'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
-    )
+      // Detener el control
+      gamepadButtons.stop()
 
-    expect(gamepadButtons.getNoiseThreshold()).toBe(0.5)
+      // Verificar que se reinicializaron correctamente
+      expect(gamepadButtons.getStatus()).toStrictEqual({
+        buttonA: 0,
+        buttonB: 0,
+      })
+    })
   })
 
-  test('debe actualizar el valor de inputDelta correctamente', () => {
-    const gamepadButtons = new GamepadButtons(buttonMapper)
+  describe('pruebas sobre setNoiseThreshold', () => {
+    test('debe actualizar el valor de noiseThreshold correctamente', () => {
+      const gamepadButtons = new GamepadButtons(buttonMapper)
 
-    gamepadButtons.setInputDelta(0.5)
+      gamepadButtons.setNoiseThreshold(0.5)
 
-    expect(() => {
-      gamepadButtons.setInputDelta(-0.5)
-    }).toThrowError(
-      'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
-    )
+      expect(() => {
+        gamepadButtons.setNoiseThreshold(-0.5)
+      }).toThrowError(
+        'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
+      )
 
-    expect(() => {
-      gamepadButtons.setInputDelta(1.5)
-    }).toThrowError(
-      'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
-    )
+      expect(() => {
+        gamepadButtons.setNoiseThreshold(1.5)
+      }).toThrowError(
+        'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
+      )
 
-    expect(gamepadButtons.getInputDelta()).toBe(0.5)
+      expect(gamepadButtons.getNoiseThreshold()).toBe(0.5)
+    })
+  })
+
+  describe('pruebas sobre setInputDelta', () => {
+    test('debe actualizar el valor de inputDelta correctamente', () => {
+      const gamepadButtons = new GamepadButtons(buttonMapper)
+
+      gamepadButtons.setInputDelta(0.5)
+
+      expect(() => {
+        gamepadButtons.setInputDelta(-0.5)
+      }).toThrowError(
+        'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
+      )
+
+      expect(() => {
+        gamepadButtons.setInputDelta(1.5)
+      }).toThrowError(
+        'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
+      )
+
+      expect(gamepadButtons.getInputDelta()).toBe(0.5)
+    })
   })
 })
