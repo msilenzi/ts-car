@@ -100,4 +100,54 @@ describe('Pruebas para GamepadAxes', () => {
       expect(updatedStatusB2).toStrictEqual({ axesB: { x: 0, y: 0 } })
     })
   })
+
+  describe('stop', () => {
+    test('debe establecer los valores iniciales correctamente', () => {
+      gpAxes.updateStatus([1, 1, 1]) // [buttonA, _, button B]
+
+      // Detener el control
+      gpAxes.stop()
+
+      // Verificar que se reinicializaron correctamente
+      expect(gpAxes.getStatus()).toStrictEqual({
+        axesA: { x: 0, y: 0 },
+        axesB: { x: 0, y: 0 },
+        axesC: { x: 0, y: 0 },
+      })
+    })
+  })
+
+  describe('setNoiseThreshold', () => {
+    test('debe actualizar el valor de noiseThreshold correctamente', () => {
+      const errorMsg =
+        'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
+
+      // Actualiza el umbral de ruido correctamente
+      gpAxes.setNoiseThreshold(0.5)
+
+      // Falla y tira un error por ser un valor inválido
+      expect(() => gpAxes.setNoiseThreshold(-0.5)).toThrowError(errorMsg)
+      expect(() => gpAxes.setNoiseThreshold(1.5)).toThrowError(errorMsg)
+
+      // Permanece el valor de la última modificación correcta
+      expect(gpAxes.getNoiseThreshold()).toBe(0.5)
+    })
+  })
+
+  describe('setInputDelta', () => {
+    test('debe actualizar el valor de inputDelta correctamente', () => {
+      const errorMsg =
+        'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
+
+      // Actualiza el delta correctamente
+      gpAxes.setInputDelta(0.5)
+
+      // Falla y tira un error por ser un valor inválido
+      expect(() => gpAxes.setInputDelta(-0.5)).toThrowError(errorMsg)
+      expect(() => gpAxes.setInputDelta(1.5)).toThrowError(errorMsg)
+
+      // Permanece el valor de la última modificación correcta
+      expect(gpAxes.getInputDelta()).toBe(0.5)
+    })
+  })
 })
