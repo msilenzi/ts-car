@@ -19,7 +19,7 @@ describe('Pruebas para GamepadButtons', () => {
   })
 
   describe('constructor', () => {
-    test('debe inicializarse correctamente', () => {
+    test('debe inicializarse y asignar los índices correctamente', () => {
       const status = gamepadButtons.getStatus()
       const indexes = gamepadButtons.getIndexes()
 
@@ -29,10 +29,7 @@ describe('Pruebas para GamepadButtons', () => {
       expectTypeOf(indexes).toMatchTypeOf<MockButtonsMapper>()
 
       // Verifica que el estado se inicialice correctamente
-      Object.values(status).forEach((value) => {
-        expectTypeOf(value).toMatchTypeOf<number>()
-        expect(value).toBe(0)
-      })
+      expect(status).toStrictEqual({ buttonA: 0, buttonB: 0 })
 
       // Verifica que los índices se asignen correctamente
       expect(indexes).toStrictEqual(buttonMapper)
