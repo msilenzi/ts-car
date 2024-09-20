@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, expectTypeOf, test } from 'vitest'
-import GamepadButtons from './GamepadButtons'
+import GamepadButtons from '../GamepadButtons.ts'
 
 describe('Pruebas para GamepadButtons', () => {
   type MockButtonsMapper = {
