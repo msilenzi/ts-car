@@ -12,16 +12,16 @@ describe('Pruebas para GamepadButtons', () => {
     buttonB: 2,
   }
 
-  let gamepadButtons: GamepadButtons<MockButtonsMapper>
+  let gpButtons: GamepadButtons<MockButtonsMapper>
 
   beforeEach(() => {
-    gamepadButtons = new GamepadButtons(buttonMapper)
+    gpButtons = new GamepadButtons(buttonMapper)
   })
 
   describe('constructor', () => {
     test('debe inicializarse y asignar los índices correctamente', () => {
-      const status = gamepadButtons.getStatus()
-      const indexes = gamepadButtons.getIndexes()
+      const status = gpButtons.getStatus()
+      const indexes = gpButtons.getIndexes()
 
       // Verifica que los tipos se definan correctamente
       // Más info: https://vitest.dev/guide/testing-types.html#testing-types
@@ -39,8 +39,8 @@ describe('Pruebas para GamepadButtons', () => {
   describe('updateStatus', () => {
     test('debe actualizar el estado correctamente', () => {
       const mockButtons: number[] = [0, 1, 1] // [buttonA, no se usa, buttonB]
-      gamepadButtons.updateStatus(mockButtons)
-      expect(gamepadButtons.getStatus()).toStrictEqual({
+      gpButtons.updateStatus(mockButtons)
+      expect(gpButtons.getStatus()).toStrictEqual({
         buttonA: 0,
         buttonB: 1,
       })
@@ -48,29 +48,29 @@ describe('Pruebas para GamepadButtons', () => {
 
     test('debe devolver los valores que cambiaron', () => {
       const mockButtons: number[] = [0, 1, 1] // [buttonA, no se usa, buttonB]
-      const updatedStatus = gamepadButtons.updateStatus(mockButtons)
+      const updatedStatus = gpButtons.updateStatus(mockButtons)
       expect(updatedStatus).toStrictEqual({ buttonB: 1 })
     })
 
     test('solo debe actualizar el estado de los botones que están por encima del umbral de ruido', () => {
-      const mockValue = gamepadButtons.getNoiseThreshold() * 0.5
-      gamepadButtons.updateStatus([mockValue, 0, 1]) // [buttonA, _, buttonB]
-      expect(gamepadButtons.getStatus()).toStrictEqual({
+      const mockValue = gpButtons.getNoiseThreshold() * 0.5
+      gpButtons.updateStatus([mockValue, 0, 1]) // [buttonA, _, buttonB]
+      expect(gpButtons.getStatus()).toStrictEqual({
         buttonA: 0, // No actualiza el estado de A por ser menor al umbral
         buttonB: 1, // Actualiza el estado de B por ser mayor al umbral
       })
     })
 
     test('solo debe actualizar el estado de los botones que cambiaron por encima del delta', () => {
-      gamepadButtons.updateStatus([0.5, 0, 0.5]) // [buttonA, _, buttonB]
-      gamepadButtons.updateStatus([
-        0.5 + gamepadButtons.getInputDelta() * 0.5, // buttonA - Debajo del delta
+      gpButtons.updateStatus([0.5, 0, 0.5]) // [buttonA, _, buttonB]
+      gpButtons.updateStatus([
+        0.5 + gpButtons.getInputDelta() * 0.5, // buttonA - Debajo del delta
         0, // no se usa
-        0.5 + gamepadButtons.getInputDelta() * 1.5, // buttonB - Sobre el delta
+        0.5 + gpButtons.getInputDelta() * 1.5, // buttonB - Sobre el delta
       ])
-      expect(gamepadButtons.getStatus()).toStrictEqual({
+      expect(gpButtons.getStatus()).toStrictEqual({
         buttonA: 0.5,
-        buttonB: 0.5 + gamepadButtons.getInputDelta() * 1.5,
+        buttonB: 0.5 + gpButtons.getInputDelta() * 1.5,
       })
     })
 
@@ -78,37 +78,35 @@ describe('Pruebas para GamepadButtons', () => {
       // buttonA y buttonB se presionan.
       // buttonB se presiona apenas sobre el umbral de ruido:
       const initialValueB =
-        gamepadButtons.getNoiseThreshold() +
-        gamepadButtons.getInputDelta() * 0.2
-      gamepadButtons.updateStatus([0.5, 0, initialValueB])
+        gpButtons.getNoiseThreshold() + gpButtons.getInputDelta() * 0.2
+      gpButtons.updateStatus([0.5, 0, initialValueB])
 
       // buttonA se suelta completamente superando el delta y buttonB se suelta
       // ligeramente, de forma que queda por debajo del umbral de ruido, pero
       // no supera el delta, por lo que no se actualiza su estado:
       const updatedValueB1 =
-        gamepadButtons.getNoiseThreshold() -
-        gamepadButtons.getInputDelta() * 0.2
-      const updatedStatus1 = gamepadButtons.updateStatus([0, 0, updatedValueB1])
+        gpButtons.getNoiseThreshold() - gpButtons.getInputDelta() * 0.2
+      const updatedStatus1 = gpButtons.updateStatus([0, 0, updatedValueB1])
       expect(updatedStatus1).toStrictEqual({ buttonA: 0 })
 
       // Se suelta un poco más a buttonB de forma que queda por debajo del
       // umbral de ruido y supera al delta. Se actualiza su estado:
       const updatedValueB2 =
-        gamepadButtons.getNoiseThreshold() - gamepadButtons.getInputDelta()
-      const updatedStatus2 = gamepadButtons.updateStatus([0, 0, updatedValueB2])
+        gpButtons.getNoiseThreshold() - gpButtons.getInputDelta()
+      const updatedStatus2 = gpButtons.updateStatus([0, 0, updatedValueB2])
       expect(updatedStatus2).toStrictEqual({ buttonB: 0 })
     })
   })
 
   describe('stop', () => {
     test('debe establecer los valores iniciales correctamente', () => {
-      gamepadButtons.updateStatus([1, 1, 1]) // [buttonA, _, button B]
+      gpButtons.updateStatus([1, 1, 1]) // [buttonA, _, button B]
 
       // Detener el control
-      gamepadButtons.stop()
+      gpButtons.stop()
 
       // Verificar que se reinicializaron correctamente
-      expect(gamepadButtons.getStatus()).toStrictEqual({
+      expect(gpButtons.getStatus()).toStrictEqual({
         buttonA: 0,
         buttonB: 0,
       })
@@ -121,16 +119,14 @@ describe('Pruebas para GamepadButtons', () => {
         'noiseThreshold should be a value greater than or equal to zero and less than or equal to one.'
 
       // Actualiza el umbral de ruido correctamente
-      gamepadButtons.setNoiseThreshold(0.5)
+      gpButtons.setNoiseThreshold(0.5)
 
       // Falla y tira un error por ser un valor inválido
-      expect(() => gamepadButtons.setNoiseThreshold(-0.5)).toThrowError(
-        errorMsg
-      )
-      expect(() => gamepadButtons.setNoiseThreshold(1.5)).toThrowError(errorMsg)
+      expect(() => gpButtons.setNoiseThreshold(-0.5)).toThrowError(errorMsg)
+      expect(() => gpButtons.setNoiseThreshold(1.5)).toThrowError(errorMsg)
 
       // Permanece el valor de la última modificación correcta
-      expect(gamepadButtons.getNoiseThreshold()).toBe(0.5)
+      expect(gpButtons.getNoiseThreshold()).toBe(0.5)
     })
   })
 
@@ -140,14 +136,14 @@ describe('Pruebas para GamepadButtons', () => {
         'inputDelta should be a value greater than or equal to zero and less than or equal to one.'
 
       // Actualiza el delta correctamente
-      gamepadButtons.setInputDelta(0.5)
+      gpButtons.setInputDelta(0.5)
 
       // Falla y tira un error por ser un valor inválido
-      expect(() => gamepadButtons.setInputDelta(-0.5)).toThrowError(errorMsg)
-      expect(() => gamepadButtons.setInputDelta(1.5)).toThrowError(errorMsg)
+      expect(() => gpButtons.setInputDelta(-0.5)).toThrowError(errorMsg)
+      expect(() => gpButtons.setInputDelta(1.5)).toThrowError(errorMsg)
 
       // Permanece el valor de la última modificación correcta
-      expect(gamepadButtons.getInputDelta()).toBe(0.5)
+      expect(gpButtons.getInputDelta()).toBe(0.5)
     })
   })
 })
