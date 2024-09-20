@@ -75,25 +75,22 @@ describe('Pruebas para GamepadButtons', () => {
     })
 
     test('debe actualizar el estado de los botones que quedaron debajo del umbral de ruido y delta', () => {
+      const nt = gpButtons.getNoiseThreshold()
+      const id = gpButtons.getInputDelta()
+
       // buttonA y buttonB se presionan.
       // buttonB se presiona apenas sobre el umbral de ruido:
-      const initialValueB =
-        gpButtons.getNoiseThreshold() + gpButtons.getInputDelta() * 0.2
-      gpButtons.updateStatus([0.5, 0, initialValueB])
+      gpButtons.updateStatus([0.5, 0, nt + id * 0.2])
 
       // buttonA se suelta completamente superando el delta y buttonB se suelta
       // ligeramente, de forma que queda por debajo del umbral de ruido, pero
       // no supera el delta, por lo que no se actualiza su estado:
-      const updatedValueB1 =
-        gpButtons.getNoiseThreshold() - gpButtons.getInputDelta() * 0.2
-      const updatedStatus1 = gpButtons.updateStatus([0, 0, updatedValueB1])
+      const updatedStatus1 = gpButtons.updateStatus([0, 0, nt - id * 0.2])
       expect(updatedStatus1).toStrictEqual({ buttonA: 0 })
 
       // Se suelta un poco más a buttonB de forma que queda por debajo del
       // umbral de ruido y supera al delta. Se actualiza su estado:
-      const updatedValueB2 =
-        gpButtons.getNoiseThreshold() - gpButtons.getInputDelta()
-      const updatedStatus2 = gpButtons.updateStatus([0, 0, updatedValueB2])
+      const updatedStatus2 = gpButtons.updateStatus([0, 0, nt - id])
       expect(updatedStatus2).toStrictEqual({ buttonB: 0 })
     })
   })
