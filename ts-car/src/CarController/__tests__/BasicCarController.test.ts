@@ -189,7 +189,7 @@ describe('BasicCarController', () => {
   })
 
   describe('handleStatusUpdated', () => {
-    let statusMock: CarMapper
+    let statusMock: ReturnType<BasicCarController['getStatus']>
 
     beforeEach(() => {
       // Esto permite que al modificar los valores de `statusMock` y después
