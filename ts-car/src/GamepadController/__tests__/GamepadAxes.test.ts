@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, expectTypeOf, test } from 'vitest'
 import GamepadAxes from '../GamepadAxes.ts'
 
-describe('Pruebas para GamepadAxes', () => {
+describe('GamepadAxes', () => {
   type MockAxesMapper = {
     axesA: { x: number; y: number }
     axesB: { x: number }
