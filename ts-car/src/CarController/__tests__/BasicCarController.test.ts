@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest'
 import BasicCarController from '../BasicCarController.ts'
 import { CarMapper } from '../AbstractCarController.ts'
+import { wheelCarMapper } from '../mappers.ts'
 
 describe('BasicCarController', () => {
   //
@@ -31,11 +32,7 @@ describe('BasicCarController', () => {
 
   beforeEach(() => {
     // Generar un nuevo control antes de cada prueba para evitar side-effects
-    const mapper: CarMapper = {
-      buttons: { adelante: 0, atras: 1 },
-      axes: { direccion: { x: 0 } },
-    }
-    controller = new BasicCarController(0, mapper, CAR_URL)
+    controller = new BasicCarController(0, wheelCarMapper, CAR_URL)
 
     // Mock para `getGamepads` si no está definido
     if (!navigator.getGamepads) {
@@ -76,9 +73,13 @@ describe('BasicCarController', () => {
       // Set up
 
       const handleStatusUpdatedSpy = vi.spyOn(controller, 'handleStatusUpdated')
+
+      // Crear un mock de gamepad con todos valores en 0.
+      // El tamaño del arreglo es arbitrario, pero debe ser mayor al mayor
+      // índice en el mapper.
       const gamepadMock = {
-        buttons: [{ value: 0.5 }, { value: 0 }],
-        axes: [0.1, -0.2],
+        buttons: Array.from({ length: 6 }, () => ({ value: 0 })),
+        axes: Array.from({ length: 4 }, () => 0),
       }
 
       vi.spyOn(navigator, 'getGamepads').mockReturnValue([
@@ -89,6 +90,14 @@ describe('BasicCarController', () => {
       // Test
 
       controller.start()
+
+      // Cambiar el estado de algunos valores:
+      // - adelante se debe considerar
+      // - atrás NO se debe considerar por estar por debajo del umbral de ruido
+      // - dirección NO se debe considerar por estar por debajo del umbral de ruido
+      gamepadMock.buttons[wheelCarMapper.buttons.adelante].value = 0.5
+      gamepadMock.buttons[wheelCarMapper.buttons.atras].value = 0.1
+      gamepadMock.axes[wheelCarMapper.axes.direccion.x] = 0.1
 
       // Simular la ejecución de un intervalo
       // Verificar que reciba correctamente el estado
@@ -106,7 +115,7 @@ describe('BasicCarController', () => {
 
       // Pasar al siguiente intervalo
       // Verificar que actualice el intervalo correctamente
-      gamepadMock.buttons[0].value = 0
+      gamepadMock.buttons[wheelCarMapper.buttons.adelante].value = 0
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledTimes(2)
       expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
