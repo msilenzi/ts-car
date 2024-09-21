@@ -44,6 +44,36 @@ describe('BasicCarController', () => {
 
   //
   // Tests
+  
+  describe('stop', () => {
+    test('debe limpiar el intervalo', () => {
+      const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval')
+
+      controller.start()
+      controller.stop()
+
+      expect(clearIntervalSpy).toHaveBeenCalledOnce()
+      clearIntervalSpy.mockRestore()
+    })
+
+    test('debe restablecer el estado del control', () => {
+      const buttonsStopSpy = vi.spyOn(controller['buttons'], 'stop')
+      const axesStopSpy = vi.spyOn(controller['axes'], 'stop')
+
+      controller.start()
+      controller.stop()
+
+      expect(buttonsStopSpy).toHaveBeenCalledOnce()
+      expect(axesStopSpy).toHaveBeenCalledOnce()
+
+      buttonsStopSpy.mockRestore()
+      axesStopSpy.mockRestore()
+    })
+
+    test('debe lanzar un error si ya está detenido', () => {
+      expect(() => controller.stop()).toThrowError('Gamepad already stopped')
+    })
+  })
 
   describe('getStatus', () => {
     test('debe devolver el estado del control', () => {

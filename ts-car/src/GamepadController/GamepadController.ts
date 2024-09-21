@@ -6,7 +6,7 @@ export default abstract class GamepadController<
   U extends AxesMapper,
 > {
   private readonly pollIntervalMs: number
-  private interval: number
+  private interval: number | null
   private buttons: GamepadButtons<T>
   private axes: GamepadAxes<U>
   private readonly gamepadIndex: number
@@ -17,7 +17,7 @@ export default abstract class GamepadController<
     gamepadAxes: GamepadAxes<U>
   ) {
     this.pollIntervalMs = 50
-    this.interval = 0
+    this.interval = null
 
     this.gamepadIndex = gamepadIndex
     this.buttons = gamepadButtons
@@ -25,6 +25,10 @@ export default abstract class GamepadController<
   }
 
   public start(): void {
+    if (this.interval !== null) {
+      throw new Error('Gamepad already started')
+    }
+
     this.interval = setInterval(() => {
       const gamepad = navigator.getGamepads()[this.gamepadIndex]!
 
@@ -45,12 +49,15 @@ export default abstract class GamepadController<
   }
 
   public stop(): void {
-    if (this.interval !== 0) {
-      clearInterval(this.interval)
-      this.buttons.stop()
-      this.axes.stop()
-      this.handleStatusUpdated(this.getStatus())
+    if (this.interval === null) {
+      throw new Error('Gamepad already stopped')
     }
+
+    clearInterval(this.interval)
+    this.buttons.stop()
+    this.axes.stop()
+    this.handleStatusUpdated(this.getStatus())
+    this.interval = null
   }
 
   public getStatus(): { buttons: T; axes: U } {
