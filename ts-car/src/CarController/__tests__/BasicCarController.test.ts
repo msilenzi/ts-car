@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest'
 import BasicCarController from '../BasicCarController.ts'
 import { CarMapper } from '../AbstractCarController.ts'
 
@@ -37,9 +37,24 @@ describe('BasicCarController', () => {
     }
     controller = new BasicCarController(0, mapper, CAR_URL)
 
+    // Mock para `getGamepads` si no está definido
+    if (!navigator.getGamepads) {
+      Object.defineProperty(navigator, 'getGamepads', {
+        value: vi.fn(() => []),
+        configurable: true,
+      })
+    }
+
     // Limpiar el estado de los mocks antes de cada prueba
     vi.clearAllMocks()
-    fetchMock.mockClear()
+
+    // Usar timers falsos que pueden ser manipulados
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    // Restaurar timers
+    vi.useRealTimers()
   })
 
   //
@@ -48,8 +63,8 @@ describe('BasicCarController', () => {
   describe('start', () => {
     test('debe iniciar el intervalo', () => {
       const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
-      controller.start()
 
+      controller.start()
       expect(setIntervalSpy).toHaveBeenCalledOnce()
       expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 50)
 
@@ -61,35 +76,21 @@ describe('BasicCarController', () => {
       // Set up
 
       const handleStatusUpdatedSpy = vi.spyOn(controller, 'handleStatusUpdated')
-
       const gamepadMock = {
         buttons: [{ value: 0.5 }, { value: 0 }],
         axes: [0.1, -0.2],
       }
 
-      if (!navigator.getGamepads) {
-        // Mock para `getGamepads` si no está definido en vitest
-        Object.defineProperty(navigator, 'getGamepads', {
-          value: vi.fn(() => [gamepadMock]),
-          configurable: true,
-        })
-      }
-
-      // Hacer que getGamepads devuelva el valor de gamepadMock (se puede mutar)
       vi.spyOn(navigator, 'getGamepads').mockReturnValue([
-        gamepadMock as unknown as Gamepad,
-      ])
-
-      // Permitir el control de los timers
-      vi.useFakeTimers()
+        gamepadMock,
+      ] as unknown as (Gamepad | null)[])
 
       //
       // Test
 
-      // Iniciar el control
       controller.start()
 
-      // Simular la ejecución del intervalo
+      // Simular la ejecución de un intervalo
       // Verificar que reciba correctamente el estado
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledOnce()
@@ -99,11 +100,12 @@ describe('BasicCarController', () => {
       })
 
       // Pasar al siguiente intervalo
-      // Verificar que no actualize el estado
+      // Verificar que no actualice el estado
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledOnce()
 
       // Pasar al siguiente intervalo
+      // Verificar que actualice el intervalo correctamente
       gamepadMock.buttons[0].value = 0
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledTimes(2)
@@ -192,7 +194,6 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "adelante" si se presiona el botón adelante', () => {
-      // Simular actualización en el estado del gamepad
       statusMock.buttons.adelante = 1
       controller.handleStatusUpdated()
 
@@ -201,7 +202,6 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "atrás" si se presiona el botón atrás', () => {
-      // Simular actualización en el estado del gamepad
       statusMock.buttons.atras = 1
       controller.handleStatusUpdated()
 
@@ -210,7 +210,6 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "izquierda" si se mueve el stick a la izquierda', () => {
-      // Simular actualización en el estado del gamepad
       statusMock.axes.direccion.x = -1
       controller.handleStatusUpdated()
 
@@ -218,8 +217,7 @@ describe('BasicCarController', () => {
       expect(fetchMock).toHaveBeenCalledWith(`${CAR_URL}/izquierda`)
     })
 
-    test('debe enviar una instrucción "derecha" si se si se mueve el stick a la derecha', () => {
-      // Simular actualización en el estado del gamepad
+    test('debe enviar una instrucción "derecha" si se mueve el stick a la derecha', () => {
       statusMock.axes.direccion.x = 1
       controller.handleStatusUpdated()
 
@@ -228,11 +226,9 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "parar" si se dejaron de presionar todos los botones', () => {
-      // Simular que se presionó el botón para mover hacia adelante
       statusMock.buttons.adelante = 1
       controller.handleStatusUpdated()
 
-      // Simular que se dejó de presionar el botón para mover hacia adelante
       statusMock.buttons.adelante = 0
       controller.handleStatusUpdated()
 
@@ -242,7 +238,6 @@ describe('BasicCarController', () => {
     })
 
     test('no debe enviar ninguna instrucción si es la misma instrucción que la última enviada', () => {
-      // Simular estado del gamepad
       statusMock.buttons.adelante = 1
 
       controller.handleStatusUpdated()
