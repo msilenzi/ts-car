@@ -45,6 +45,15 @@ describe('BasicCarController', () => {
   //
   // Tests
 
+  describe('getStatus', () => {
+    test('debe devolver el estado del control', () => {
+      expect(controller.getStatus()).toStrictEqual({
+        buttons: { adelante: 0, atras: 0 },
+        axes: { direccion: { x: 0, y: 0 } },
+      })
+    })
+  })
+
   describe('handleStatusUpdated', () => {
     let statusMock: CarMapper
 
