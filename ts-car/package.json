@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts",
     "test": "vitest --typecheck",
+    "test:ui": "vitest --typecheck --ui",
     "coverage": "vitest run --coverage --typecheck"
   },
   "devDependencies": {
@@ -16,6 +17,7 @@
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/ui": "^1.6.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vitest": "^0.4.0",
