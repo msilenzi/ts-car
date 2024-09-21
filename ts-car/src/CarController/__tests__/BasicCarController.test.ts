@@ -32,7 +32,7 @@ describe('BasicCarController', () => {
   beforeEach(() => {
     // Generar un nuevo control antes de cada prueba para evitar side-effects
     const mapper: CarMapper = {
-      buttons: { adelante: 1, atras: 0 },
+      buttons: { adelante: 0, atras: 1 },
       axes: { direccion: { x: 0 } },
     }
     controller = new BasicCarController(0, mapper, CAR_URL)
@@ -44,7 +44,95 @@ describe('BasicCarController', () => {
 
   //
   // Tests
-  
+
+  describe('start', () => {
+    test('debe iniciar el intervalo', () => {
+      const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
+      controller.start()
+
+      expect(setIntervalSpy).toHaveBeenCalledOnce()
+      expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 50)
+
+      setIntervalSpy.mockRestore()
+    })
+
+    test('solo debe actualizar el estado del control si tiene modificaciones', () => {
+      //
+      // Set up
+
+      const handleStatusUpdatedSpy = vi.spyOn(controller, 'handleStatusUpdated')
+
+      const gamepadMock = {
+        buttons: [{ value: 0.5 }, { value: 0 }],
+        axes: [0.1, -0.2],
+      }
+
+      if (!navigator.getGamepads) {
+        // Mock para `getGamepads` si no está definido en vitest
+        Object.defineProperty(navigator, 'getGamepads', {
+          value: vi.fn(() => [gamepadMock]),
+          configurable: true,
+        })
+      }
+
+      // Hacer que getGamepads devuelva el valor de gamepadMock (se puede mutar)
+      vi.spyOn(navigator, 'getGamepads').mockReturnValue([
+        gamepadMock as unknown as Gamepad,
+      ])
+
+      // Permitir el control de los timers
+      vi.useFakeTimers()
+
+      //
+      // Test
+
+      // Iniciar el control
+      controller.start()
+
+      // Simular la ejecución del intervalo
+      // Verificar que reciba correctamente el estado
+      vi.advanceTimersToNextTimer()
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledOnce()
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
+        buttons: { adelante: 0.5 },
+        axes: {},
+      })
+
+      // Pasar al siguiente intervalo
+      // Verificar que no actualize el estado
+      vi.advanceTimersToNextTimer()
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledOnce()
+
+      // Pasar al siguiente intervalo
+      gamepadMock.buttons[0].value = 0
+      vi.advanceTimersToNextTimer()
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledTimes(2)
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
+        buttons: { adelante: 0 },
+        axes: {},
+      })
+
+      handleStatusUpdatedSpy.mockRestore()
+    })
+
+    test('debe lanzar un error si ya está iniciado', () => {
+      const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
+      controller.start()
+
+      // Al iniciar cuando ya está iniciado lanza un error
+      expect(() => controller.start()).toThrowError('Gamepad already started')
+      expect(setIntervalSpy).toHaveBeenCalledOnce()
+
+      // Al detener y volver a iniciar el control debe volver a ejecutarse
+      controller.stop()
+      controller.start()
+
+      expect(setIntervalSpy).toHaveBeenCalledTimes(2)
+
+      setIntervalSpy.mockRestore()
+    })
+  })
+
   describe('stop', () => {
     test('debe limpiar el intervalo', () => {
       const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval')
