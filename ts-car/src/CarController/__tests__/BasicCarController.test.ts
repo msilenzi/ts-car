@@ -1,6 +1,5 @@
 import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest'
 import BasicCarController from '../BasicCarController.ts'
-import { CarMapper } from '../AbstractCarController.ts'
 import { wheelCarMapper } from '../mappers.ts'
 
 describe('BasicCarController', () => {
