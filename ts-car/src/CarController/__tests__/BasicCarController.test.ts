@@ -59,12 +59,17 @@ describe('BasicCarController', () => {
     test('debe restablecer el estado del control', () => {
       const buttonsStopSpy = vi.spyOn(controller['buttons'], 'stop')
       const axesStopSpy = vi.spyOn(controller['axes'], 'stop')
+      const handleStatusUpdatedSpy = vi.spyOn(controller, 'handleStatusUpdated')
 
       controller.start()
       controller.stop()
 
       expect(buttonsStopSpy).toHaveBeenCalledOnce()
       expect(axesStopSpy).toHaveBeenCalledOnce()
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
+        buttons: { adelante: 0, atras: 0 },
+        axes: { direccion: { x: 0, y: 0 } },
+      })
 
       buttonsStopSpy.mockRestore()
       axesStopSpy.mockRestore()
