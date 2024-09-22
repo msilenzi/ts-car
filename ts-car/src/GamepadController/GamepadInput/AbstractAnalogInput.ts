@@ -20,7 +20,7 @@ export default abstract class AbstractAnalogInput<
     this.inputDelta = inputDelta
   }
 
-  public hasBeenUpdated(gamepad: Gamepad): boolean {
+  protected hasBeenUpdated(gamepad: Gamepad): boolean {
     if (this.isOverNoiseThreshold(this.getStatus())) {
       return this.isOverInputDelta(this.getCurrentValue(gamepad))
     }

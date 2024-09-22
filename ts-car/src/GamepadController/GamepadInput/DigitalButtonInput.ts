@@ -9,7 +9,7 @@ export default class DigitalButtonInput extends AbstractGamepadInput<number> {
     return Number(gamepad.buttons[this.getIndex()].pressed)
   }
 
-  public hasBeenUpdated(gamepad: Gamepad): boolean {
+  protected hasBeenUpdated(gamepad: Gamepad): boolean {
     return this.getStatus() !== this.getCurrentValue(gamepad)
   }
 

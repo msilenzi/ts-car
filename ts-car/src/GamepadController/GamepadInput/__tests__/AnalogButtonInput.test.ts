@@ -2,18 +2,14 @@ import { beforeEach, describe, expect, test } from 'vitest'
 import AnalogButtonInput from '../AnalogButtonInput.ts'
 
 describe('AnalogButtonInput', () => {
-  const gamepadButtonIndex = 1
   let analogButton: AnalogButtonInput
-  let gamepadMock: Gamepad
+  const gamepadMock = { buttons: [{ value: 0.3 }] } as unknown as Gamepad
 
   beforeEach(() => {
-    analogButton = new AnalogButtonInput(gamepadButtonIndex, {
+    analogButton = new AnalogButtonInput(0, {
       noiseThreshold: 0.25,
       inputDelta: 0.2,
     })
-    gamepadMock = {
-      buttons: [{ value: 0.2 }, { value: 0.3 }, { value: 0 }],
-    } as unknown as Gamepad
   })
 
   describe('constructor', () => {
@@ -30,41 +26,28 @@ describe('AnalogButtonInput', () => {
   })
 
   describe('updateStatus', () => {
-    test('debe actualizar correctamente el estado', () => {
-      expect(analogButton.updateStatus(gamepadMock)).toBe(0.3)
-      expect(analogButton.getStatus()).toBe(0.3)
-    })
-  })
-
-  describe('hasBeenUpdated', () => {
     test('Debe devolver false si ya estaba siendo accionada la entrada y el delta es menor', () => {
-      const gpMock = {
-        buttons: [{ value: 0 }, { value: 0.5 }],
-      } as unknown as Gamepad
+      const gpMock = { buttons: [{ value: 0.5 }] } as unknown as Gamepad
       analogButton.updateStatus(gamepadMock) // Accionar la entrada
-      expect(analogButton.hasBeenUpdated(gpMock)).toBeFalsy()
+      expect(analogButton.updateStatus(gpMock)).toBeFalsy()
     })
 
     test('Debe devolver true si ya estaba siendo accionada la entrada y el delta es mayor', () => {
-      const gpMock = {
-        buttons: [{ value: 0 }, { value: 0.51 }],
-      } as unknown as Gamepad
+      const gpMock = { buttons: [{ value: 0.51 }] } as unknown as Gamepad
       analogButton.updateStatus(gamepadMock) // Accionar la entrada
-      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
+      expect(analogButton.updateStatus(gpMock)).toBeTruthy()
+      expect(analogButton.getStatus()).toBe(gpMock.buttons[0].value)
     })
 
     test('Debe devolver false si no estaba siendo accionada la entrada y está por debajo del umbral de ruido', () => {
-      const gpMock = {
-        buttons: [{ value: 0 }, { value: 0.25 }],
-      } as unknown as Gamepad
-      expect(analogButton.hasBeenUpdated(gpMock)).toBeFalsy()
+      const gpMock = { buttons: [{ value: 0.25 }] } as unknown as Gamepad
+      expect(analogButton.updateStatus(gpMock)).toBeFalsy()
     })
 
     test('Debe devolver true si no estaba siendo accionada la entrada y está por encima del umbral de ruido', () => {
-      const gpMock = {
-        buttons: [{ value: 0 }, { value: 0.26 }],
-      } as unknown as Gamepad
-      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
+      const gpMock = { buttons: [{ value: 0.26 }] } as unknown as Gamepad
+      expect(analogButton.updateStatus(gpMock)).toBeTruthy()
+      expect(analogButton.getStatus()).toBe(gpMock.buttons[0].value)
     })
   })
 
