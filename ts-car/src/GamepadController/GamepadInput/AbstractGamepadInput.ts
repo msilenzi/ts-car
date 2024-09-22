@@ -1,29 +1,27 @@
-export default abstract class AbstractGamepadInput {
-  private readonly index: number
-  private status!: number
+export default abstract class AbstractGamepadInput<TIndex, TStatus> {
+  private readonly index: TIndex
+  protected status!: TStatus
 
-  protected constructor(index: number) {
+  protected constructor(index: TIndex) {
     this.index = index
     this.initializeStatus()
   }
 
-  public updateStatus(gamepad: Gamepad): number {
+  public updateStatus(gamepad: Gamepad): TStatus {
     return (this.status = this.getCurrentValue(gamepad))
   }
 
-  public initializeStatus(): void {
-    this.status = 0
-  }
+  public abstract initializeStatus(): void
 
   public abstract hasBeenUpdated(gamepad: Gamepad): boolean
 
-  protected abstract getCurrentValue(gamepad: Gamepad): number
+  protected abstract getCurrentValue(gamepad: Gamepad): TStatus
 
-  public getStatus(): number {
+  public getStatus(): TStatus {
     return this.status
   }
 
-  public getIndex(): number {
+  public getIndex(): TIndex {
     return this.index
   }
 }
