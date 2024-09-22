@@ -11,7 +11,7 @@ describe('AdvancedCarController', () => {
   }))
 
   vi.mock('../../ui/controllerStatus.ts', () => ({
-    setStatus: vi.fn(() => {}),
+    setControllerStatus: vi.fn(() => {}),
   }))
 
   const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue({

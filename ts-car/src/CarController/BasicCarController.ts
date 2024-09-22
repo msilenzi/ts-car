@@ -1,13 +1,17 @@
 import AbstractCarController, { CarMapper } from './AbstractCarController'
 import { setLatency } from '../ui/latency.ts'
-import { setStatus } from '../ui/controllerStatus.ts'
+import { setControllerStatus } from '../ui/controllerStatus.ts'
 
 type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
 
-  public constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
+  public constructor(
+    gamepadIndex: number,
+    carMapper: CarMapper,
+    CAR_URL: string
+  ) {
     super(gamepadIndex, carMapper, CAR_URL)
     this.lastInstruction = 'parar'
   }
@@ -33,7 +37,7 @@ export default class BasicCarController extends AbstractCarController {
       })
 
       this.lastInstruction = newInstruction
-      setStatus(newInstruction)
+      setControllerStatus(newInstruction)
     }
   }
 }

@@ -79,9 +79,9 @@ window.addEventListener('gamepaddisconnected', () => {
   carController = null
   form.enableSubmit()
 
-  connectionStatus.setStatus('secondary', 'desconectado')
+  connectionStatus.setConnectionStatus('secondary', 'desconectado')
   latency.setEmptyLatency()
-  controllerStatus.setEmptyStatus()
+  controllerStatus.setEmptyControllerStatus()
 })
 
 // Se dispara cuando se cierra/recarga la página

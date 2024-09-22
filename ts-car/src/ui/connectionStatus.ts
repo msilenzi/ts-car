@@ -9,7 +9,7 @@ const COLORS = {
   info: 'text-info',
 }
 
-export function setStatus(color: keyof typeof COLORS, text: string) {
+export function setConnectionStatus(color: keyof typeof COLORS, text: string) {
   $connectionStatus.className = COLORS[color]
   $connectionStatus.innerText = text
 }

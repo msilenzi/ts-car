@@ -1,5 +1,5 @@
 import { DriverOption, TypeOption } from '../main.ts'
-import { setStatus } from './connectionStatus.ts'
+import { setConnectionStatus } from './connectionStatus.ts'
 
 export type FormData = {
   ipAddress: string
@@ -72,7 +72,7 @@ export function initForm(types: TypeOption[], drivers: DriverOption[]) {
   loadTypeOptions(types)
   loadDriversOptions(drivers)
   $btnConnect.disabled = true
-  setStatus('secondary', 'desconectado')
+  setConnectionStatus('secondary', 'desconectado')
 }
 
 export function bindOnFinish(handler: (values: FormData) => void) {
@@ -89,16 +89,16 @@ export function bindOnFinish(handler: (values: FormData) => void) {
       return
     }
 
-    setStatus('warning', 'conectando...')
+    setConnectionStatus('warning', 'conectando...')
 
     if (!(await _isValidIpAddress())) {
       e.stopPropagation()
-      setStatus('danger', 'no se puedo conectar a la IP ingresada')
+      setConnectionStatus('danger', 'no se puedo conectar a la IP ingresada')
       return
     }
 
     $btnConnect.disabled = true
-    setStatus('success', 'conectado')
+    setConnectionStatus('success', 'conectado')
     lastSubmitted = _getCurrentFormValues()
     handler(lastSubmitted)
   })
