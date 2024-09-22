@@ -1,43 +1,11 @@
-export default class GamepadDigitalButton {
-  private readonly index: number
-  private status!: number
+import AbstractGamepadInput from './AbstractGamepadInput.ts'
 
-  constructor(index: number) {
-    this.index = index
-    this.initializeStatus()
-  }
-
-  public updateStatus(gamepad: Gamepad): number {
-    return (this.status = this.getCurrentValue(gamepad))
-  }
-
+export default class GamepadDigitalButton extends AbstractGamepadInput {
   public hasBeenUpdated(gamepad: Gamepad): boolean {
-    return this.status !== this.getCurrentValue(gamepad)
+    return this.getStatus() !== this.getCurrentValue(gamepad)
   }
 
-  public initializeStatus(): void {
-    this.status = 0
-  }
-
-  public getStatus(): number {
-    return this.status
-  }
-
-  public getIndex(): number {
-    return this.index
-  }
-
-  private getCurrentValue(gamepad: Gamepad): number {
-    return Number(gamepad.buttons[this.index].pressed)
+  protected getCurrentValue(gamepad: Gamepad): number {
+    return Number(gamepad.buttons[this.getIndex()].pressed)
   }
 }
-
-/*
-  [ ] updateStatus
-  [ ] hasBeenUpdated
-  [x] initializeStatus
-  [-] stop
-  [x] getCurrentValue
-  [x] getStatus
-  [x] getIndex
- */
