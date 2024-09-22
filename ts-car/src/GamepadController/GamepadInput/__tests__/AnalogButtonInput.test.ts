@@ -3,11 +3,11 @@ import AnalogButtonInput from '../AnalogButtonInput.ts'
 
 describe('AnalogButtonInput', () => {
   const gamepadButtonIndex = 1
-  let gamepadButton: AnalogButtonInput
+  let analogButton: AnalogButtonInput
   let gamepadMock: Gamepad
 
   beforeEach(() => {
-    gamepadButton = new AnalogButtonInput(gamepadButtonIndex, {
+    analogButton = new AnalogButtonInput(gamepadButtonIndex, {
       noiseThreshold: 0.25,
       inputDelta: 0.2,
     })
@@ -18,8 +18,8 @@ describe('AnalogButtonInput', () => {
 
   describe('constructor', () => {
     test('debe inicializar correctamente las opciones', () => {
-      expect(gamepadButton.getNoiseThreshold()).toBe(0.25)
-      expect(gamepadButton.getInputDelta()).toBe(0.2)
+      expect(analogButton.getNoiseThreshold()).toBe(0.25)
+      expect(analogButton.getInputDelta()).toBe(0.2)
     })
 
     test('debe inicializar las opciones con valores por defecto', () => {
@@ -31,8 +31,8 @@ describe('AnalogButtonInput', () => {
 
   describe('updateStatus', () => {
     test('debe actualizar correctamente el estado', () => {
-      expect(gamepadButton.updateStatus(gamepadMock)).toBe(0.3)
-      expect(gamepadButton.getStatus()).toBe(0.3)
+      expect(analogButton.updateStatus(gamepadMock)).toBe(0.3)
+      expect(analogButton.getStatus()).toBe(0.3)
     })
   })
 
@@ -41,78 +41,78 @@ describe('AnalogButtonInput', () => {
       const gpMock = {
         buttons: [{ value: 0 }, { value: 0.5 }],
       } as unknown as Gamepad
-      gamepadButton.updateStatus(gamepadMock) // Accionar la entrada
-      expect(gamepadButton.hasBeenUpdated(gpMock)).toBeFalsy()
+      analogButton.updateStatus(gamepadMock) // Accionar la entrada
+      expect(analogButton.hasBeenUpdated(gpMock)).toBeFalsy()
     })
 
     test('Debe devolver true si ya estaba siendo accionada la entrada y el delta es mayor', () => {
       const gpMock = {
         buttons: [{ value: 0 }, { value: 0.51 }],
       } as unknown as Gamepad
-      gamepadButton.updateStatus(gamepadMock) // Accionar la entrada
-      expect(gamepadButton.hasBeenUpdated(gpMock)).toBeTruthy()
+      analogButton.updateStatus(gamepadMock) // Accionar la entrada
+      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
     })
 
     test('Debe devolver true si no estaba siendo accionada la entrada y está por encima del umbral de ruido', () => {
       const gpMock = {
         buttons: [{ value: 0 }, { value: 0.26 }],
       } as unknown as Gamepad
-      expect(gamepadButton.hasBeenUpdated(gpMock)).toBeTruthy()
+      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
     })
 
     test('Debe devolver false si no estaba siendo accionada la entrada y está por debajo del umbral de ruido', () => {
       const gpMock = {
         buttons: [{ value: 0 }, { value: 0.25 }],
       } as unknown as Gamepad
-      expect(gamepadButton.hasBeenUpdated(gpMock)).toBeFalsy()
+      expect(analogButton.hasBeenUpdated(gpMock)).toBeFalsy()
     })
 
     test('debe indicar si el estado del botón en el gamepad cambió', () => {
-      expect(gamepadButton.hasBeenUpdated(gamepadMock)).toBeTruthy()
+      expect(analogButton.hasBeenUpdated(gamepadMock)).toBeTruthy()
     })
   })
 
   describe('setNoiseThreshold', () => {
     test('debe fallar si el nuevo valor es menor a 0', () => {
-      expect(() => gamepadButton.setNoiseThreshold(-0.1)).toThrowError(
+      expect(() => analogButton.setNoiseThreshold(-0.1)).toThrowError(
         'noiseThreshold must be a value greater than or equal to zero.'
       )
     })
 
     test('debe fallar si el nuevo valor es mayor a 1', () => {
-      expect(() => gamepadButton.setNoiseThreshold(1.1)).toThrowError(
+      expect(() => analogButton.setNoiseThreshold(1.1)).toThrowError(
         'noiseThreshold must be a value lower than or equal to one.'
       )
     })
 
     test('debe actualizar correctamente el valor si está entre 0 y 1', () => {
-      gamepadButton.setNoiseThreshold(0)
-      expect(gamepadButton.getNoiseThreshold()).toBe(0)
+      analogButton.setNoiseThreshold(0)
+      expect(analogButton.getNoiseThreshold()).toBe(0)
 
-      gamepadButton.setNoiseThreshold(1)
-      expect(gamepadButton.getNoiseThreshold()).toBe(1)
+      analogButton.setNoiseThreshold(1)
+      expect(analogButton.getNoiseThreshold()).toBe(1)
     })
   })
 
   describe('setInputDelta', () => {
     test('debe fallar si el nuevo valor es menor a 0', () => {
-      expect(() => gamepadButton.setInputDelta(-0.1)).toThrowError(
+      expect(() => analogButton.setInputDelta(-0.1)).toThrowError(
         'inputDelta must be a value greater than or equal to zero.'
       )
     })
 
     test('debe fallar si el nuevo valor es mayor a 1', () => {
-      expect(() => gamepadButton.setInputDelta(1.1)).toThrowError(
+      expect(() => analogButton.setInputDelta(1.1)).toThrowError(
         'inputDelta must be a value lower than or equal to one.'
       )
     })
 
     test('debe actualizar correctamente el valor si está entre 0 y 1', () => {
-      gamepadButton.setInputDelta(0)
-      expect(gamepadButton.getInputDelta()).toBe(0)
+      analogButton.setInputDelta(0)
+      expect(analogButton.getInputDelta()).toBe(0)
 
-      gamepadButton.setInputDelta(1)
-      expect(gamepadButton.getInputDelta()).toBe(1)
+      analogButton.setInputDelta(1)
+      expect(analogButton.getInputDelta()).toBe(1)
     })
   })
 })
