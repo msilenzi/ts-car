@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import AdvancedCarController from '../AdvancedCarController.ts'
-import { xboxCarMapper } from '../mappers.ts'
+import { createXboxCarMapper } from '../mappers.ts'
 
 describe('AdvancedCarController', () => {
   //
@@ -30,7 +30,7 @@ describe('AdvancedCarController', () => {
   // Set up
 
   beforeEach(() => {
-    controller = new AdvancedCarController(0, xboxCarMapper, CAR_URL)
+    controller = new AdvancedCarController(0, createXboxCarMapper(), CAR_URL)
     vi.clearAllMocks()
   })
 
@@ -42,15 +42,18 @@ describe('AdvancedCarController', () => {
 
     beforeEach(() => {
       statusMock = {
-        buttons: { adelante: 0, atras: 0, rotarDer: 0, rotarIzq: 0 },
-        axes: { direccion: { x: 0 } },
+        adelante: 0,
+        atras: 0,
+        rotarDer: 0,
+        rotarIzq: 0,
+        direccion: 0,
       }
       vi.spyOn(controller, 'getStatus').mockReturnValue(statusMock)
     })
 
     test('debe enviar el estado actualizado', () => {
-      statusMock.buttons.adelante = 1
-      statusMock.axes.direccion.x = 1
+      statusMock.adelante = 1
+      statusMock.direccion = 1
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledOnce()
