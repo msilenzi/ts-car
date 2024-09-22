@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "check": "tsc --noEmit",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write --list-different .",
     "test": "vitest --typecheck",
     "test:ui": "vitest --typecheck --ui",
     "coverage": "vitest run --coverage --typecheck"
