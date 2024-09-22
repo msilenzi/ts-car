@@ -26,9 +26,17 @@ export default abstract class AbstractAnalogInput<
     return this.isOverNoiseThreshold(this.getCurrentValue(gamepad))
   }
 
-  protected abstract isOverNoiseThreshold(value: TStatus): boolean
+  private isOverNoiseThreshold(value: TStatus): boolean {
+    return this.calculateNoiseThreshold(value) > this.noiseThreshold
+  }
 
-  protected abstract isOverInputDelta(newValue: TStatus): boolean
+  private isOverInputDelta(newValue: TStatus): boolean {
+    return this.calculateInputDelta(newValue) > this.inputDelta
+  }
+
+  protected abstract calculateNoiseThreshold(value: TStatus): number
+
+  protected abstract calculateInputDelta(newValue: TStatus): number
 
   public getNoiseThreshold(): number {
     return this.noiseThreshold

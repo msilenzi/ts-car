@@ -8,11 +8,11 @@ export default abstract class AbstractSingleAnalogInput extends AbstractAnalogIn
     this.status = 0
   }
 
-  protected isOverInputDelta(newValue: number): boolean {
-    return Math.abs(newValue - this.getStatus()) > this.getInputDelta()
+  protected calculateNoiseThreshold(value: number): number {
+    return Math.abs(value)
   }
 
-  protected isOverNoiseThreshold(value: number): boolean {
-    return Math.abs(value) > this.getNoiseThreshold()
+  protected calculateInputDelta(newValue: number): number {
+    return Math.abs(newValue - this.getStatus())
   }
 }

@@ -23,14 +23,12 @@ export default class DualAxisInput extends AbstractAnalogInput<
     this.status = { x: 0, y: 0 }
   }
 
-  protected isOverInputDelta(newValue: DualAxisValue): boolean {
-    const distance = this.calculateEuclideanDistance(this.getStatus(), newValue)
-    return distance > this.getInputDelta()
+  protected calculateNoiseThreshold(value: DualAxisValue): number {
+    return this.calculateEuclideanDistance({ x: 0, y: 0 }, value)
   }
 
-  protected isOverNoiseThreshold(value: DualAxisValue): boolean {
-    const distance = this.calculateEuclideanDistance({ x: 0, y: 0 }, value)
-    return distance > this.getNoiseThreshold()
+  protected calculateInputDelta(newValue: DualAxisValue): number {
+    return this.calculateEuclideanDistance(this.getStatus(), newValue)
   }
 
   private calculateEuclideanDistance(
