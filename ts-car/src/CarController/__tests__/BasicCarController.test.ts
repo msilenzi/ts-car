@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest'
 import BasicCarController from '../BasicCarController.ts'
-import { wheelCarMapper } from '../mappers.ts'
+import { createWheelCarMapper } from '../mappers.ts'
 
 describe('BasicCarController', () => {
   //
@@ -25,13 +25,14 @@ describe('BasicCarController', () => {
 
   const CAR_URL = 'test.com'
   let controller: BasicCarController
+  const wheelCarMapper = createWheelCarMapper()
 
   //
   // Set up
 
   beforeEach(() => {
     // Generar un nuevo control antes de cada prueba para evitar side-effects
-    controller = new BasicCarController(0, wheelCarMapper, CAR_URL)
+    controller = new BasicCarController(0, createWheelCarMapper(), CAR_URL)
 
     // Mock para `getGamepads` si no está definido
     if (!navigator.getGamepads) {
@@ -77,7 +78,7 @@ describe('BasicCarController', () => {
       // El tamaño del arreglo es arbitrario, pero debe ser mayor al mayor
       // índice en el mapper.
       const gamepadMock = {
-        buttons: Array.from({ length: 6 }, () => ({ value: 0 })),
+        buttons: Array.from({ length: 6 }, () => ({ pressed: false })),
         axes: Array.from({ length: 4 }, () => 0),
       }
 
@@ -92,20 +93,15 @@ describe('BasicCarController', () => {
 
       // Cambiar el estado de algunos valores:
       // - adelante se debe considerar
-      // - atrás NO se debe considerar por estar por debajo del umbral de ruido
       // - dirección NO se debe considerar por estar por debajo del umbral de ruido
-      gamepadMock.buttons[wheelCarMapper.buttons.adelante].value = 0.5
-      gamepadMock.buttons[wheelCarMapper.buttons.atras].value = 0.1
-      gamepadMock.axes[wheelCarMapper.axes.direccion.x] = 0.1
+      gamepadMock.buttons[wheelCarMapper.adelante.getIndex()].pressed = true
+      gamepadMock.axes[wheelCarMapper.direccion.getIndex()] = 0.1
 
       // Simular la ejecución de un intervalo
       // Verificar que reciba correctamente el estado
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledOnce()
-      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
-        buttons: { adelante: 0.5 },
-        axes: {},
-      })
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({ adelante: 1 })
 
       // Pasar al siguiente intervalo
       // Verificar que no actualice el estado
@@ -114,13 +110,10 @@ describe('BasicCarController', () => {
 
       // Pasar al siguiente intervalo
       // Verificar que actualice el intervalo correctamente
-      gamepadMock.buttons[wheelCarMapper.buttons.adelante].value = 0
+      gamepadMock.buttons[wheelCarMapper.adelante.getIndex()].pressed = false
       vi.advanceTimersToNextTimer()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledTimes(2)
-      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
-        buttons: { adelante: 0 },
-        axes: {},
-      })
+      expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({ adelante: 0 })
 
       handleStatusUpdatedSpy.mockRestore()
     })
@@ -130,7 +123,9 @@ describe('BasicCarController', () => {
       controller.start()
 
       // Al iniciar cuando ya está iniciado lanza un error
-      expect(() => controller.start()).toThrowError('Gamepad already started')
+      expect(() => controller.start()).toThrowError(
+        'Gamepad polling already started'
+      )
       expect(setIntervalSpy).toHaveBeenCalledOnce()
 
       // Al detener y volver a iniciar el control debe volver a ejecutarse
@@ -155,34 +150,31 @@ describe('BasicCarController', () => {
     })
 
     test('debe restablecer el estado del control', () => {
-      const buttonsStopSpy = vi.spyOn(controller['buttons'], 'stop')
-      const axesStopSpy = vi.spyOn(controller['axes'], 'stop')
       const handleStatusUpdatedSpy = vi.spyOn(controller, 'handleStatusUpdated')
 
       controller.start()
       controller.stop()
 
-      expect(buttonsStopSpy).toHaveBeenCalledOnce()
-      expect(axesStopSpy).toHaveBeenCalledOnce()
       expect(handleStatusUpdatedSpy).toHaveBeenCalledWith({
-        buttons: { adelante: 0, atras: 0 },
-        axes: { direccion: { x: 0, y: 0 } },
+        adelante: 0,
+        atras: 0,
+        direccion: 0,
       })
-
-      buttonsStopSpy.mockRestore()
-      axesStopSpy.mockRestore()
     })
 
     test('debe lanzar un error si ya está detenido', () => {
-      expect(() => controller.stop()).toThrowError('Gamepad already stopped')
+      expect(() => controller.stop()).toThrowError(
+        'Gamepad polling already stopped'
+      )
     })
   })
 
   describe('getStatus', () => {
     test('debe devolver el estado del control', () => {
       expect(controller.getStatus()).toStrictEqual({
-        buttons: { adelante: 0, atras: 0 },
-        axes: { direccion: { x: 0, y: 0 } },
+        adelante: 0,
+        atras: 0,
+        direccion: 0,
       })
     })
   })
@@ -194,15 +186,12 @@ describe('BasicCarController', () => {
       // Esto permite que al modificar los valores de `statusMock` y después
       // invocar a `controller.handleStatusUpdated()` se tomen los valores
       // como el nuevo estado
-      statusMock = {
-        buttons: { adelante: 0, atras: 0 },
-        axes: { direccion: { x: 0 } },
-      }
+      statusMock = { adelante: 0, atras: 0, direccion: 0 }
       vi.spyOn(controller, 'getStatus').mockReturnValue(statusMock)
     })
 
     test('debe enviar una instrucción "adelante" si se presiona el botón adelante', () => {
-      statusMock.buttons.adelante = 1
+      statusMock.adelante = 1
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledOnce()
@@ -210,7 +199,7 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "atrás" si se presiona el botón atrás', () => {
-      statusMock.buttons.atras = 1
+      statusMock.atras = 1
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledOnce()
@@ -218,7 +207,7 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "izquierda" si se mueve el stick a la izquierda', () => {
-      statusMock.axes.direccion.x = -1
+      statusMock.direccion = -1
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledOnce()
@@ -226,7 +215,7 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "derecha" si se mueve el stick a la derecha', () => {
-      statusMock.axes.direccion.x = 1
+      statusMock.direccion = 1
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledOnce()
@@ -234,10 +223,10 @@ describe('BasicCarController', () => {
     })
 
     test('debe enviar una instrucción "parar" si se dejaron de presionar todos los botones', () => {
-      statusMock.buttons.adelante = 1
+      statusMock.adelante = 1
       controller.handleStatusUpdated()
 
-      statusMock.buttons.adelante = 0
+      statusMock.adelante = 0
       controller.handleStatusUpdated()
 
       expect(fetchMock).toHaveBeenCalledTimes(2)
@@ -246,7 +235,7 @@ describe('BasicCarController', () => {
     })
 
     test('no debe enviar ninguna instrucción si es la misma instrucción que la última enviada', () => {
-      statusMock.buttons.adelante = 1
+      statusMock.adelante = 1
 
       controller.handleStatusUpdated()
       controller.handleStatusUpdated()

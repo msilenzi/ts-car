@@ -31,15 +31,15 @@ export default abstract class GamepadController<T extends GamepadMapper> {
     }
 
     this.pollInterval = setInterval(() => {
-      const gp = navigator.getGamepads()[this.gamepadIndex]
-      if (gp === null) throw new Error('Invalid gamepad')
+      const gp = navigator.getGamepads()[this.gamepadIndex]!
 
-      const updatedStatus: Partial<GamepadStatus<T>> = Object.entries(
-        this.mapper
-      ).reduce((acc, [key, input]) => {
-        if (!input.updateStatus(gp)) return acc
-        return { ...acc, [key]: input.getStatus() }
-      }, {})
+      const updatedStatus = Object.entries(this.mapper).reduce(
+        (acc, [key, input]) => {
+          if (!input.updateStatus(gp)) return acc
+          return { ...acc, [key]: input.getStatus() }
+        },
+        {} as Partial<GamepadStatus<T>>
+      )
 
       if (Object.keys(updatedStatus).length !== 0) {
         this.handleStatusUpdated(updatedStatus)
