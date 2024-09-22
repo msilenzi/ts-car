@@ -1,118 +1,130 @@
 @startuml
 
-abstract class GamepadComponent<T, U extends Record<string, T>> <<abstract>> {
-  - noiseThreshold: number
-  - inputDelta: number
-  - indexes: U
-  - status: U
+package GamepadController {
+  package GamepadInput {
+    abstract class AbstractGamepadInput<T extends AllowedGamepadInputValues> {
+        - <<readonly>> index: T
+        # status: T
 
-  + constructor(indexes: U)
-  + updateStatus(newValues: number[]): Partial~<U>
-  # {abstract} <<abstract>> getNewValue(key: keyof U, newValues: number[]): T
-  # {abstract} <<abstract>> initializeInput(): T
-  # {abstract} <<abstract>> isOverNoiseThreshold(value: T): boolean
-  # {abstract} <<abstract>> isOverInputDelta(lastValue: T, newValue: T): boolean
-  - hasBeenUpdated(lastValue: T, newValue: T): boolean
-  - initializeStatus(): void
-  + stop(): void
-  + getStatus(): U
-  + getIndexes(): U
-  + getIndex(key: keyof U): T
-  + getNoiseThreshold(): number
-  + setNoiseThreshold(noiseThreshold: number): void
-  + getInputDelta(): number
-  + setInputDelta(inputDelta: number): void
-}
+        # <<create>> constructor(index: T)
+        + updateStatus(gamepad: Gamepad): boolean
+        + {abstract} <<abstract>> initializeStatus(): void
+        # {abstract} <<abstract>> hasBeenUpdated(newValue: T): boolean
+        # {abstract} <<abstract>> getCurrentValue(gamepad: Gamepad): T
+        + getStatus(): T
+        + getIndex(): T
+    }
 
+    note right of AbstractGamepadInput
+      type DualAxisValue = { x: number; y: number }
+      type AllowedGamepadInputValues = number | DualAxisValue
+    end note
 
-class GamepadAxes<T extends AxesMapper> {
-  # getNewValue(key: keyof T, newValues: number[]): AxisValue
-  # initializeInput(): AxisValue
-  # isOverNoiseThreshold(value: AxisValue): boolean
-  # isOverInputDelta(lastValue: AxisValue, newValue: AxisValue): boolean
-}
+    class DigitalButtonInput<T: number> extends AbstractGamepadInput {
+      + <<create>> constructor(index: T)
+      # getCurrentValue(gamepad: Gamepad): number
+      # hasBeenUpdated(newValue: number): boolean
+      + initializeStatus(): void
+    }
 
-note left of GamepadAxes
-  type AxisValue = { x?: number; y?: number }
-  type AxesMapper = Record<string, AxisValue>
-end note
+    abstract class AbstractAnalogInput<T extends AllowedGamepadInputValues> extends AbstractGamepadInput {
+      - noiseThreshold: number
+      - inputDelta: number
 
+      # <<create>> constructor(index: T, options: AnalogInputOptions = {})
+      + updateStatus(gamepad: Gamepad): boolean
+      # hasBeenUpdated(newValue: T): boolean
+      - isOverNoiseThreshold(value: T): boolean
+      - isOverInputDelta(newValue: T): boolean
+      # {abstract} <<abstract>> calculateNoiseThreshold(value: T): number
+      # {abstract} <<abstract>> calculateInputDelta(newValue: T): number
+      + getNoiseThreshold(): number
+      + setNoiseThreshold(noiseThreshold: number): void
+      + getInputDelta(): number
+      + setInputDelta(inputDelta: number): void
+    }
 
-class GamepadButtons<T extends ButtonMapper> {
-  # getNewValue(key: keyof T, newValues: number[]): number
-  # initializeInput(): number
-  # isOverNoiseThreshold(value: number): boolean
-  # isOverInputDelta(lastValue: number, newValue: number): boolean
-}
+    abstract class AbstractSingleAnalogInput<T: number> extends AbstractAnalogInput {
+      + initializeStatus(): void
+      # calculateNoiseThreshold(value: number): number
+      # calculateInputDelta(newValue: number): number
+    }
 
-note right of GamepadButtons
-  type ButtonMapper = Record<string, number>
-end note
+    class SingleAxisInput extends AbstractSingleAnalogInput {
+      + <<create>> constructor(index: number, options: AnalogInputOptions = {})
+      # getCurrentValue(gamepad: Gamepad): number
+    }
 
+    class AnalogButtonInput extends AbstractSingleAnalogInput {
+      + <<create>> constructor(index: number, options: AnalogInputOptions = {})
+      # getCurrentValue(gamepad: Gamepad): number
+    }
 
-abstract class GamepadController<T extends ButtonMapper, U extends AxesMapper> <<abstract>> {
-  - pollIntervalMs: number
-  - interval: number
-  - readonly gamepadIndex: number
-
-  + constructor(gamepadIndex: number, gamepadButtons: GamepadButtons<T>,gamepadAxes: GamepadAxes~<U>)
-  + start(): void
-  + stop(): void
-  + getStatus(): { buttons: T; axes: U }
-  + {abstract} <<abstract>> handleStatusUpdated(status: { buttons: Partial<T>, axes: Partial~<U> }): void
-}
-
-
-class CarController {
-  - lastInstruction: Instructions
-  
-  + constructor(gamepadIndex: number, carMapper: CarMapper)
-  + handleStatusUpdated(): void
-}
-
-note right of CarController
-  type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
-
-  type CarButtonMapper = { adelante: number; atras: number }
-  type CarAxesMapper = { direccion: { x: number } }
-
-  type CarMapper = { buttons: CarButtonMapper, axes: CarAxesMapper }
-end note
-
-
-class WheelCarController {
-  + constructor(gamepadIndex: number)
-}
-
-note left of WheelCarController
-  const wheelCarMapper: CarMapper = {
-    buttons: { adelante: 5, atras: 4 },
-    axes: { direccion: { x: 0 } },
+    class DualAxisInput<T: DualAxisValue> extends AbstractAnalogInput {
+      + <<create>> constructor(index: number, options: AnalogInputOptions = {})
+      # getCurrentValue(gamepad: Gamepad): DualAxisValue
+      + initializeStatus(): void
+      # calculateNoiseThreshold(value: DualAxisValue): number
+      # calculateInputDelta(newValue: DualAxisValue): number
+      - calculateEuclideanDistance(orig: DualAxisValue, dest: DualAxisValue): number
+    }
   }
-end note
 
+  abstract class AbstractGamepadController<T extends GamepadMapper> <<abstract>> {
+    - <<readonly>> POLL_INTERVAL_TIME_MS: number
+    - pollInterval: number | null
+    - <<readonly>> mapper: T
+    - <<readonly>> gamepadIndex: number
 
-class XboxCarController {
-  + constructor(gamepadIndex: number)
+    # <<create>> constructor(gamepadIndex: number, mapper: T)
+    + start(): void
+    + stop(): void
+    + getStatus(): GamepadStatus<T>
+    + {abstract} <<abstract>> handleStatusUpdated(status: Partial<GamepadStatus<T>>): void
+  }
+
+  note bottom of AbstractGamepadController
+    type GamepadMapper = Record<
+      string,
+      AbstractGamepadInput<AllowedGamepadInputValues>
+    >
+
+    type GamepadStatus<T extends GamepadMapper> = {
+      [K in keyof T]: ReturnType<T[K]['getStatus']>
+    }
+  end note
 }
 
-note right of XboxCarController
-  const xboxCarMapper: CarMapper = {
-    buttons: { adelante: 7, atras: 6 },
-    axes: { direccion: { x: 0 } },
+package CarController {
+  abstract class AbstractCarController<T: CarMapper> {
+    # <<readonly>> CAR_URL: string
+
+    # <<create>> constructor(gamepadIndex: number, mapper: CarMapper, CAR_URL: string)
   }
-end note
+  AbstractGamepadController <|-- AbstractCarController
 
+  note right of AbstractCarController
+    type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
+    type CarMapper = {
+      adelante: AbstractGamepadInput<number>
+      atras: AbstractGamepadInput<number>
+      rotarIzq?: AbstractGamepadInput<number>
+      rotarDer?: AbstractGamepadInput<number>
+      direccion: AbstractGamepadInput<number>
+    }
+  end note
 
-GamepadComponent <|-- GamepadAxes : - GamepadComponent<AxisValue, T>
-GamepadComponent <|-- GamepadButtons: - GamepadComponent<number, T>
+  class BasicCarController extends AbstractCarController {
+    - lastInstruction: Instructions
 
-GamepadAxes    <-- GamepadController : axes
-GamepadButtons <-- GamepadController: buttons
+    + <<create>> constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string)
+    + handleStatusUpdated(): void
+  }
 
-GamepadController <|-- CarController : GamepadController<CarButtonMapper,CarAxesMapper>
-
-CarController <|-- WheelCarController
-CarController <|-- XboxCarController
+  class AdvancedCarController extends AbstractCarController {
+    + <<create>> constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string)
+    + handleStatusUpdated(): void
+  }
+}
 
 @enduml

@@ -16,11 +16,11 @@ export default abstract class AbstractAnalogInput<
   protected constructor(index: T, options: AnalogInputOptions = {}) {
     const { noiseThreshold = 0.15, inputDelta = 0.1 } = options
     super(index)
-    this.noiseThreshold = noiseThreshold
-    this.inputDelta = inputDelta
+    this.setNoiseThreshold(noiseThreshold)
+    this.setInputDelta(inputDelta)
   }
 
-  updateStatus(gamepad: Gamepad): boolean {
+  public updateStatus(gamepad: Gamepad): boolean {
     const newValue = this.getCurrentValue(gamepad)
 
     if (!this.hasBeenUpdated(newValue)) return false

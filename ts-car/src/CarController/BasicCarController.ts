@@ -7,7 +7,7 @@ type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
 
-  constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
+  public constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
     super(gamepadIndex, carMapper, CAR_URL)
     this.lastInstruction = 'parar'
   }

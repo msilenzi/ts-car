@@ -11,7 +11,9 @@ export type GamepadStatus<T extends GamepadMapper> = {
   [K in keyof T]: ReturnType<T[K]['getStatus']>
 }
 
-export default abstract class GamepadController<T extends GamepadMapper> {
+export default abstract class AbstractGamepadController<
+  T extends GamepadMapper,
+> {
   private readonly POLL_INTERVAL_TIME_MS: number
   private pollInterval: number | null
   private readonly mapper: T

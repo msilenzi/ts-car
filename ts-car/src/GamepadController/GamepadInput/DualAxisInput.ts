@@ -15,7 +15,7 @@ export default class DualAxisInput extends AbstractAnalogInput<DualAxisValue> {
     }
   }
 
-  initializeStatus(): void {
+  public initializeStatus(): void {
     this.status = { x: 0, y: 0 }
   }
 

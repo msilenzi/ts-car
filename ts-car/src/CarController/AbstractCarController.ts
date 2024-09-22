@@ -1,4 +1,4 @@
-import GamepadController from 'GamepadController/GamepadController'
+import AbstractGamepadController from 'GamepadController/AbstractGamepadController.ts'
 import AbstractGamepadInput from '../GamepadController/GamepadInput/AbstractGamepadInput.ts'
 
 export type CarMapper = {
@@ -9,7 +9,7 @@ export type CarMapper = {
   direccion: AbstractGamepadInput<number>
 }
 
-export default abstract class AbstractCarController extends GamepadController<CarMapper> {
+export default abstract class AbstractCarController extends AbstractGamepadController<CarMapper> {
   protected readonly CAR_URL: string
 
   protected constructor(
