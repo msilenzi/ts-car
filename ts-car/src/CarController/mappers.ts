@@ -1,11 +1,22 @@
 import { CarMapper } from './AbstractCarController'
+import DigitalButtonInput from '../GamepadController/GamepadInput/DigitalButtonInput.ts'
+import AnalogButtonInput from '../GamepadController/GamepadInput/AnalogButtonInput.ts'
+import SingleAxisInput from '../GamepadController/GamepadInput/SingleAxisInput.ts'
 
-export const xboxCarMapper: CarMapper = {
-  buttons: { adelante: 7, atras: 6, rotarIzq: 4, rotarDer: 5 },
-  axes: { direccion: { x: 0 } },
+export function createXboxCarMapper(): CarMapper {
+  return {
+    adelante: new AnalogButtonInput(7, { noiseThreshold: 0 }),
+    atras: new AnalogButtonInput(6, { noiseThreshold: 0 }),
+    rotarIzq: new DigitalButtonInput(4),
+    rotarDer: new DigitalButtonInput(5),
+    direccion: new SingleAxisInput(0),
+  }
 }
 
-export const wheelCarMapper: CarMapper = {
-  buttons: { adelante: 5, atras: 4 },
-  axes: { direccion: { x: 0 } },
+export function createWheelCarMapper(): CarMapper {
+  return {
+    adelante: new DigitalButtonInput(5),
+    atras: new DigitalButtonInput(4),
+    direccion: new SingleAxisInput(0),
+  }
 }
