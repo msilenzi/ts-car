@@ -1,6 +1,6 @@
 import AbstractGamepadInput from './AbstractGamepadInput.ts'
 
-export type AbstractGamepadAnalogInputOptions = {
+export type AnalogInputOptions = {
   noiseThreshold?: number
   inputDelta?: number
 }
@@ -12,10 +12,7 @@ export default abstract class AbstractAnalogInput<
   private noiseThreshold!: number
   private inputDelta!: number
 
-  protected constructor(
-    index: TIndex,
-    options: AbstractGamepadAnalogInputOptions = {}
-  ) {
+  protected constructor(index: TIndex, options: AnalogInputOptions = {}) {
     const { noiseThreshold = 0.15, inputDelta = 0.1 } = options
     super(index)
     this.noiseThreshold = noiseThreshold

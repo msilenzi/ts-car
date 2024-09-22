@@ -1,10 +1,8 @@
-import AbstractAnalogInput, {
-  AbstractGamepadAnalogInputOptions,
-} from './AbstractAnalogInput.ts'
+import { AnalogInputOptions } from './AbstractAnalogInput.ts'
 import AbstractSingleAnalogInput from './AbstractSingleAnalogInput.ts'
 
 export default class AnalogButtonInput extends AbstractSingleAnalogInput {
-  constructor(index: number, options: AbstractGamepadAnalogInputOptions = {}) {
+  constructor(index: number, options: AnalogInputOptions = {}) {
     super(index, options)
   }
 
