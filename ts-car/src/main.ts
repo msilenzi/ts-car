@@ -11,7 +11,10 @@ import AbstractCarController, {
 } from 'CarController/AbstractCarController'
 import AdvancedCarController from 'CarController/AdvancedCarController'
 import BasicCarController from 'CarController/BasicCarController'
-import { wheelCarMapper, xboxCarMapper } from 'CarController/mappers'
+import {
+  createWheelCarMapper,
+  createXboxCarMapper,
+} from 'CarController/mappers'
 
 export type TypeOption = {
   displayName: string
@@ -30,11 +33,11 @@ export type DriverOption = {
 const TYPES: TypeOption[] = [
   {
     displayName: 'Mando de Xbox',
-    mapper: xboxCarMapper,
+    mapper: createXboxCarMapper(),
   },
   {
     displayName: 'Volante',
-    mapper: wheelCarMapper,
+    mapper: createWheelCarMapper(),
   },
 ]
 
@@ -50,7 +53,6 @@ const DRIVERS: DriverOption[] = [
 ]
 
 let carController: AbstractCarController | null = null
-
 
 form.initForm(TYPES, DRIVERS)
 
