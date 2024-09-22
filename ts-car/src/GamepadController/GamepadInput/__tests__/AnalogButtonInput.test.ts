@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import GamepadAnalogButton from '../GamepadAnalogButton.ts'
+import AnalogButtonInput from '../AnalogButtonInput.ts'
 
-describe('GamepadAnalogButton', () => {
+describe('AnalogButtonInput', () => {
   const gamepadButtonIndex = 1
-  let gamepadButton: GamepadAnalogButton
+  let gamepadButton: AnalogButtonInput
   let gamepadMock: Gamepad
 
   beforeEach(() => {
-    gamepadButton = new GamepadAnalogButton(gamepadButtonIndex, {
+    gamepadButton = new AnalogButtonInput(gamepadButtonIndex, {
       noiseThreshold: 0.25,
       inputDelta: 0.2,
     })
@@ -23,7 +23,7 @@ describe('GamepadAnalogButton', () => {
     })
 
     test('debe inicializar las opciones con valores por defecto', () => {
-      const btn = new GamepadAnalogButton(1)
+      const btn = new AnalogButtonInput(1)
       expect(btn.getNoiseThreshold()).toBe(0.15)
       expect(btn.getInputDelta()).toBe(0.1)
     })

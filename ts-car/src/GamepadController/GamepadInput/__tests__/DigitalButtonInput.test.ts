@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import GamepadDigitalButton from '../GamepadDigitalButton.ts'
 
-describe('GamepadDigitalButton', () => {
+describe('DigitalButtonInput', () => {
   const gamepadButtonIndex = 1
   let gamepadButton: GamepadDigitalButton
   let gamepadMock: Gamepad
