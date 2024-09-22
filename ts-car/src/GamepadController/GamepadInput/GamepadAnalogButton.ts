@@ -13,12 +13,4 @@ export default class GamepadAnalogButton extends AbstractGamepadAnalogInput {
   protected getCurrentValue(gamepad: Gamepad): number {
     return gamepad.buttons[this.getIndex()].value
   }
-
-  protected isOverInputDelta(value: number): boolean {
-    return Math.abs(value - this.getStatus()) > this.getInputDelta()
-  }
-
-  protected isOverNoiseThreshold(value: number): boolean {
-    return value > this.getNoiseThreshold()
-  }
 }

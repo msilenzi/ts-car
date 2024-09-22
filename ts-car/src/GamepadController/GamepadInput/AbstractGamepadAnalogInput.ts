@@ -26,9 +26,13 @@ export default abstract class AbstractGamepadAnalogInput extends AbstractGamepad
     return this.isOverNoiseThreshold(this.getCurrentValue(gamepad))
   }
 
-  protected abstract isOverNoiseThreshold(value: number): boolean
+  protected isOverNoiseThreshold(value: number): boolean {
+    return Math.abs(value) > this.getNoiseThreshold()
+  }
 
-  protected abstract isOverInputDelta(value: number): boolean
+  protected isOverInputDelta(value: number): boolean {
+    return Math.abs(value - this.getStatus()) > this.getInputDelta()
+  }
 
   public getNoiseThreshold(): number {
     return this.noiseThreshold
