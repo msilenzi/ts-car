@@ -5,7 +5,7 @@ export type AbstractGamepadAnalogInputOptions = {
   inputDelta?: number
 }
 
-export default abstract class AbstractGamepadAnalogInput extends AbstractGamepadInput {
+export default abstract class AbstractAnalogInput extends AbstractGamepadInput {
   private noiseThreshold!: number
   private inputDelta!: number
 

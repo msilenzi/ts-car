@@ -1,6 +1,6 @@
 import AbstractGamepadInput from './AbstractGamepadInput.ts'
 
-export default class GamepadDigitalButton extends AbstractGamepadInput {
+export default class DigitalButtonInput extends AbstractGamepadInput {
   public constructor(index: number) {
     super(index)
   }

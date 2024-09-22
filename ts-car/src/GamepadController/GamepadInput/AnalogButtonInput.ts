@@ -2,7 +2,7 @@ import AbstractAnalogInput, {
   AbstractGamepadAnalogInputOptions,
 } from './AbstractAnalogInput.ts'
 
-export default class GamepadAnalogButton extends AbstractAnalogInput {
+export default class AnalogButtonInput extends AbstractAnalogInput {
   public constructor(
     index: number,
     options: AbstractGamepadAnalogInputOptions = {}

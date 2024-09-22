@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import GamepadDigitalButton from '../GamepadDigitalButton.ts'
+import DigitalButtonInput from '../DigitalButtonInput.ts'
 
 describe('DigitalButtonInput', () => {
   const gamepadButtonIndex = 1
-  let gamepadButton: GamepadDigitalButton
+  let gamepadButton: DigitalButtonInput
   let gamepadMock: Gamepad
 
   beforeEach(() => {
-    gamepadButton = new GamepadDigitalButton(gamepadButtonIndex)
+    gamepadButton = new DigitalButtonInput(gamepadButtonIndex)
     gamepadMock = {
       buttons: [{ pressed: true }, { pressed: true }, { pressed: false }],
     } as unknown as Gamepad
