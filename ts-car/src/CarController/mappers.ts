@@ -5,8 +5,8 @@ import SingleAxisInput from '../GamepadController/GamepadInput/SingleAxisInput.t
 
 export function createXboxCarMapper(): CarMapper {
   return {
-    adelante: new AnalogButtonInput(7, { noiseThreshold: 0 }),
-    atras: new AnalogButtonInput(6, { noiseThreshold: 0 }),
+    adelante: new AnalogButtonInput(7, { noiseThreshold: 0.1 }),
+    atras: new AnalogButtonInput(6, { noiseThreshold: 0.1 }),
     rotarIzq: new DigitalButtonInput(4),
     rotarDer: new DigitalButtonInput(5),
     direccion: new SingleAxisInput(0),
