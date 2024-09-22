@@ -13,14 +13,14 @@ export default abstract class AbstractGamepadInput<
   }
 
   public updateStatus(gamepad: Gamepad): boolean {
-    if (!this.hasBeenUpdated(gamepad)) return false
+    if (!this.hasBeenUpdated(this.getCurrentValue(gamepad))) return false
     this.status = this.getCurrentValue(gamepad)
     return true
   }
 
   public abstract initializeStatus(): void
 
-  protected abstract hasBeenUpdated(gamepad: Gamepad): boolean
+  protected abstract hasBeenUpdated(newValue: T): boolean
 
   protected abstract getCurrentValue(gamepad: Gamepad): T
 
