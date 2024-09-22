@@ -1,13 +1,18 @@
-export default abstract class AbstractGamepadInput<TIndex, TStatus> {
-  private readonly index: TIndex
-  protected status!: TStatus
+export type DualAxisValue = { x: number; y: number }
+export type AllowedGamepadInputValues = number | DualAxisValue
 
-  protected constructor(index: TIndex) {
+export default abstract class AbstractGamepadInput<
+  T extends AllowedGamepadInputValues,
+> {
+  private readonly index: T
+  protected status!: T
+
+  protected constructor(index: T) {
     this.index = index
     this.initializeStatus()
   }
 
-  public updateStatus(gamepad: Gamepad): TStatus {
+  public updateStatus(gamepad: Gamepad): T {
     return (this.status = this.getCurrentValue(gamepad))
   }
 
@@ -15,13 +20,13 @@ export default abstract class AbstractGamepadInput<TIndex, TStatus> {
 
   public abstract hasBeenUpdated(gamepad: Gamepad): boolean
 
-  protected abstract getCurrentValue(gamepad: Gamepad): TStatus
+  protected abstract getCurrentValue(gamepad: Gamepad): T
 
-  public getStatus(): TStatus {
+  public getStatus(): T {
     return this.status
   }
 
-  public getIndex(): TIndex {
+  public getIndex(): T {
     return this.index
   }
 }

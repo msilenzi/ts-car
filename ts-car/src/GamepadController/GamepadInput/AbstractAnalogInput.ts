@@ -1,4 +1,6 @@
-import AbstractGamepadInput from './AbstractGamepadInput.ts'
+import AbstractGamepadInput, {
+  AllowedGamepadInputValues,
+} from './AbstractGamepadInput.ts'
 
 export type AnalogInputOptions = {
   noiseThreshold?: number
@@ -6,13 +8,12 @@ export type AnalogInputOptions = {
 }
 
 export default abstract class AbstractAnalogInput<
-  TIndex,
-  TStatus,
-> extends AbstractGamepadInput<TIndex, TStatus> {
+  T extends AllowedGamepadInputValues,
+> extends AbstractGamepadInput<T> {
   private noiseThreshold!: number
   private inputDelta!: number
 
-  protected constructor(index: TIndex, options: AnalogInputOptions = {}) {
+  protected constructor(index: T, options: AnalogInputOptions = {}) {
     const { noiseThreshold = 0.15, inputDelta = 0.1 } = options
     super(index)
     this.noiseThreshold = noiseThreshold
@@ -26,17 +27,17 @@ export default abstract class AbstractAnalogInput<
     return this.isOverNoiseThreshold(this.getCurrentValue(gamepad))
   }
 
-  private isOverNoiseThreshold(value: TStatus): boolean {
+  private isOverNoiseThreshold(value: T): boolean {
     return this.calculateNoiseThreshold(value) > this.noiseThreshold
   }
 
-  private isOverInputDelta(newValue: TStatus): boolean {
+  private isOverInputDelta(newValue: T): boolean {
     return this.calculateInputDelta(newValue) > this.inputDelta
   }
 
-  protected abstract calculateNoiseThreshold(value: TStatus): number
+  protected abstract calculateNoiseThreshold(value: T): number
 
-  protected abstract calculateInputDelta(newValue: TStatus): number
+  protected abstract calculateInputDelta(newValue: T): number
 
   public getNoiseThreshold(): number {
     return this.noiseThreshold

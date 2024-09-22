@@ -1,13 +1,9 @@
 import AbstractAnalogInput, {
   AnalogInputOptions,
 } from './AbstractAnalogInput.ts'
+import { DualAxisValue } from './AbstractGamepadInput.ts'
 
-type DualAxisValue = { x: number; y: number }
-
-export default class DualAxisInput extends AbstractAnalogInput<
-  DualAxisValue,
-  DualAxisValue
-> {
+export default class DualAxisInput extends AbstractAnalogInput<DualAxisValue> {
   public constructor(index: DualAxisValue, options: AnalogInputOptions = {}) {
     super(index, options)
   }

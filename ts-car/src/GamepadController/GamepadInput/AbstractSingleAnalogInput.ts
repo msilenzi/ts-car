@@ -1,9 +1,6 @@
 import AbstractAnalogInput from './AbstractAnalogInput.ts'
 
-export default abstract class AbstractSingleAnalogInput extends AbstractAnalogInput<
-  number,
-  number
-> {
+export default abstract class AbstractSingleAnalogInput extends AbstractAnalogInput<number> {
   initializeStatus(): void {
     this.status = 0
   }
