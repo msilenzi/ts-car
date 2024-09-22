@@ -53,13 +53,6 @@ describe('AnalogButtonInput', () => {
       expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
     })
 
-    test('Debe devolver true si no estaba siendo accionada la entrada y está por encima del umbral de ruido', () => {
-      const gpMock = {
-        buttons: [{ value: 0 }, { value: 0.26 }],
-      } as unknown as Gamepad
-      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
-    })
-
     test('Debe devolver false si no estaba siendo accionada la entrada y está por debajo del umbral de ruido', () => {
       const gpMock = {
         buttons: [{ value: 0 }, { value: 0.25 }],
@@ -67,8 +60,11 @@ describe('AnalogButtonInput', () => {
       expect(analogButton.hasBeenUpdated(gpMock)).toBeFalsy()
     })
 
-    test('debe indicar si el estado del botón en el gamepad cambió', () => {
-      expect(analogButton.hasBeenUpdated(gamepadMock)).toBeTruthy()
+    test('Debe devolver true si no estaba siendo accionada la entrada y está por encima del umbral de ruido', () => {
+      const gpMock = {
+        buttons: [{ value: 0 }, { value: 0.26 }],
+      } as unknown as Gamepad
+      expect(analogButton.hasBeenUpdated(gpMock)).toBeTruthy()
     })
   })
 

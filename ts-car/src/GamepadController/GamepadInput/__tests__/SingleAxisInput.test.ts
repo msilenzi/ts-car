@@ -7,9 +7,7 @@ describe('SingleAxisInput', () => {
 
   beforeEach(() => {
     singleAxis = new SingleAxisInput(0)
-    gamepadMock = {
-      axes: [0.2],
-    } as unknown as Gamepad
+    gamepadMock = { axes: [0.2] } as unknown as Gamepad
   })
 
   describe('updateStatus', () => {
