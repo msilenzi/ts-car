@@ -1,29 +1,23 @@
-import GamepadAxes from 'GamepadController/GamepadAxes'
-import GamepadButtons from 'GamepadController/GamepadButtons'
 import GamepadController from 'GamepadController/GamepadController'
+import AbstractGamepadInput from '../GamepadController/GamepadInput/AbstractGamepadInput.ts'
 
-export type CarButtonMapper = {
-  adelante: number
-  atras: number
-  rotarIzq?: number
-  rotarDer?: number
+export type CarMapper = {
+  adelante: AbstractGamepadInput<number>
+  atras: AbstractGamepadInput<number>
+  rotarIzq?: AbstractGamepadInput<number>
+  rotarDer?: AbstractGamepadInput<number>
+  direccion: AbstractGamepadInput<number>
 }
-export type CarAxesMapper = { direccion: { x: number } }
 
-export type CarMapper = { buttons: CarButtonMapper; axes: CarAxesMapper }
-
-export default abstract class AbstractCarController extends GamepadController<
-  CarButtonMapper,
-  CarAxesMapper
-> {
+export default abstract class AbstractCarController extends GamepadController<CarMapper> {
   protected readonly CAR_URL: string
 
-  protected constructor(gamepadIndex: number, carMapper: CarMapper, CAR_URL: string) {
-    super(
-      gamepadIndex,
-      new GamepadButtons(carMapper.buttons),
-      new GamepadAxes(carMapper.axes)
-    )
+  protected constructor(
+    gamepadIndex: number,
+    mapper: CarMapper,
+    CAR_URL: string
+  ) {
+    super(gamepadIndex, mapper)
     this.CAR_URL = CAR_URL
   }
 }

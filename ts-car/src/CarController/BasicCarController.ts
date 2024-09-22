@@ -2,12 +2,7 @@ import AbstractCarController, { CarMapper } from './AbstractCarController'
 import { setLatency } from '../ui/latency.ts'
 import { setStatus } from '../ui/controllerStatus.ts'
 
-type Instructions =
-  | 'adelante'
-  | 'atras'
-  | 'parar'
-  | 'derecha'
-  | 'izquierda'
+type Instructions = 'adelante' | 'atras' | 'parar' | 'derecha' | 'izquierda'
 
 export default class BasicCarController extends AbstractCarController {
   private lastInstruction: Instructions
@@ -18,14 +13,12 @@ export default class BasicCarController extends AbstractCarController {
   }
 
   public handleStatusUpdated(): void {
-    const { direccion } = this.getStatus().axes
-    const { adelante, atras } = this.getStatus().buttons
-
+    const { adelante, atras, direccion } = this.getStatus()
     let newInstruction: Instructions = 'parar'
 
-    if (direccion.x <= -0.5) {
+    if (direccion <= -0.5) {
       newInstruction = 'izquierda'
-    } else if (direccion.x >= 0.5) {
+    } else if (direccion >= 0.5) {
       newInstruction = 'derecha'
     } else if (adelante >= 0.5) {
       newInstruction = 'adelante'
