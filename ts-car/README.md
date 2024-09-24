@@ -8,7 +8,6 @@
 El proyecto puede ejecutarse directamente al descargar el archivo `dist.zip` desde [*Releases*](https://github.com/msilenzi/ts-car/releases/), descomprimir el archivo y abrir `index.html`.
 
 En caso de querer trabajar con el código fuente:
-
 1. Instalar las dependencias
     - Node.js y NPM. En caso de no tenerlo instalado recomiendo usar [nvm (Node Version Manager)](https://github.com/nvm-sh/nvm) (disponible para cualquier SO).
 
@@ -30,29 +29,70 @@ En caso de querer trabajar con el código fuente:
    Este comando crea un servidor local en la PC y solo se puede acceder desde él. En caso de querer hacer pública la aplicación en la red local (por ejemplo, para usarla desde otro dispositivo) podés ejecutar `npm run dev -- --host`.
 
 
+## Scripts
+
+> **IMPORTANTE:** para ejecutar estos scripts es necesario estar dentro de la carpeta (o subcarpetas) del proyecto.
+
+Dentro del archivo `package.json` se definen los siguientes scripts que pueden ejecutarse con `npm run <script>`:
+- **Scripts de vite**
+  - `dev` inicia un servidor de desarrollo que permite ver los cambios aplicados en tiempo real.
+  - `build` genera un build de producción y lo guarda en una carpeta `dist/`. Transpila todos los archivos de TS a JS y genera un bundle con todos los archivos de desarrollo y las dependencias (como bootstrap).  
+     Gracias a la dependencia `vite-plugin-singlefile` este bundle se hace en un único archivo `index.html`. Esto permite que pueda usarse la aplicación abriendo directamente el archivo `index.html` desde el navegador, sin tener que levantar un servidor.  
+     Con este comando se genera el archivo que 
+  - `preview` Ejecuta un servidor local que te permite previsualizar la versión de producción del proyecto generada por el comando `build`. Este comando es útil para verificar que el build de producción funcione correctamente.
+- **Herramientas de desarrollo**
+  - `lint` ejecuta ESLint para analizar el código en busca de errores, problemas de estilo y malas prácticas. Este comando no corrige estos errores, pero es útil para detectarlos fácilmente. 
+  - `check` ejecuta el compilador de TypeScript (tsc) en modo de chequeo (`--noEmit`), sin generar archivos. Esto asegura que no haya errores de tipado en el código. Este comando es útil para detectar errores de TypeScript.
+  - `format` verifica si el código está formateado correctamente de acuerdo con las reglas de Prettier. Es útil para asegurarte de que el código siga un estilo consistente en el proyecto.
+  - `format:fix` aplica las reglas de Prettier para corregir el formato del código y muestra los archivos que fueron modificados. Este comando es útil para formatear rápidamente todo el código fuente del proyecto. La configuración de estilos de Prettier está definida en el archivo `.prettierrc`.
+- **Testing**
+  - `test` ejecuta Vitest para correr todos los test definidos en el proyecto. Con este comando Vitest se ejecuta en modo escucha, por lo que al realizar cambios en los archivos volverá a ejecutar los test correspondientes automáticamente.
+  - `test:ui` es igual que el comando `test`, pero además abre una web con una interfaz gráfica para visualizarlos.
+  - `coverage` ejecuta Vitest en modo de cobertura para mostrar qué partes del código están siendo testeadas y cuáles no. Esto te ayuda a identificar áreas del proyecto que podrían necesitar más pruebas. Además, este comando crea una carpeta `coverage/` donde se puede ver de forma más detallada el análisis del código.
+
+
 ## Estructura del proyecto
 
 ```
 .
+├── public
+│   └── vite.svg
+├── src
+│   ├── CarController
+│   │   ├── __tests__/...
+│   │   ├── AbstractCarController.ts
+│   │   ├── AdvancedCarController.ts
+│   │   ├── BasicCarController.ts
+│   │   └── mappers.ts
+│   ├── GamepadController
+│   │   ├── GamepadInput
+│   │   │   ├── __tests__/...
+│   │   │   ├── AbstractAnalogInput.ts
+│   │   │   ├── AbstractGamepadInput.ts
+│   │   │   ├── AbstractSingleAnalogInput.ts
+│   │   │   ├── AnalogButtonInput.ts
+│   │   │   ├── DigitalButtonInput.ts
+│   │   │   ├── DualAxisInput.ts
+│   │   │   └── SingleAxisInput.ts
+│   │   └── AbstractGamepadController.ts
+│   ├── ui
+│   │   ├── connectionStatus.ts
+│   │   ├── controllerStatus.ts
+│   │   ├── form.ts
+│   │   └── latency.ts
+│   ├── main.ts
+│   ├── style.css
+│   └── vite-env.d.ts
+├── .eslintrc
+├── .prettierrc
+├── diagrama.puml
 ├── index.html
-├── main.ts
 ├── package.json
-└── src/
-    ├── GamepadController/
-    │   ├── GamepadAxes.ts
-    │   ├── GamepadButtons.ts
-    │   └── GamepadController.ts
-    ├── CarController/
-    │   ├── AbstractCarController.ts
-    │   ├── BasicCarController.ts
-    │   ├── AdvancedCarController.ts
-    │   └── mappers.ts
-    └── ui/
-        ├── form.ts
-        ├── connectionStatus.ts
-        ├── controllerStatus.ts
-        └── latency.ts
-
+├── package-lock.json
+├── README.md
+├── ts-car-flows.json
+├── tsconfig.json
+└── vite.config.ts
 ```
 
 ### `GamepadController/`
