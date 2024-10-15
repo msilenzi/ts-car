@@ -20,3 +20,12 @@ export function createWheelCarMapper(): CarMapper {
     direccion: new SingleAxisInput(0),
   }
 }
+
+export function createDancePadMapper(): CarMapper {
+  return {
+    adelante: new DigitalButtonInput(0),
+    atras: new DigitalButtonInput(1),
+    izquierda: new DigitalButtonInput(2),
+    derecha: new DigitalButtonInput(3),
+  }
+}

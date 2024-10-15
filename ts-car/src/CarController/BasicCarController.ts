@@ -17,12 +17,12 @@ export default class BasicCarController extends AbstractCarController {
   }
 
   public handleStatusUpdated(): void {
-    const { adelante, atras, direccion } = this.getStatus()
+    const { adelante, atras, izquierda, derecha, direccion } = this.getStatus()
     let newInstruction: Instructions = 'parar'
 
-    if (direccion <= -0.5) {
+    if (direccion <= -0.5 || izquierda >= 0.5) {
       newInstruction = 'izquierda'
-    } else if (direccion >= 0.5) {
+    } else if (direccion >= 0.5 || derecha >= 0.5) {
       newInstruction = 'derecha'
     } else if (adelante >= 0.5) {
       newInstruction = 'adelante'

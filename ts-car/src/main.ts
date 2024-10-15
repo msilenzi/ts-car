@@ -12,6 +12,7 @@ import AbstractCarController, {
 import AdvancedCarController from 'CarController/AdvancedCarController'
 import BasicCarController from 'CarController/BasicCarController'
 import {
+  createDancePadMapper,
   createWheelCarMapper,
   createXboxCarMapper,
 } from 'CarController/mappers'
@@ -39,6 +40,10 @@ const TYPES: TypeOption[] = [
     displayName: 'Volante',
     mapper: createWheelCarMapper(),
   },
+  {
+    displayName: 'Alfombra de baile',
+    mapper: createDancePadMapper(),
+  }
 ]
 
 const DRIVERS: DriverOption[] = [
