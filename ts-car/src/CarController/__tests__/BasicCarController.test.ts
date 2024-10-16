@@ -95,7 +95,7 @@ describe('BasicCarController', () => {
       // - adelante se debe considerar
       // - dirección NO se debe considerar por estar por debajo del umbral de ruido
       gamepadMock.buttons[wheelCarMapper.adelante.getIndex()].pressed = true
-      gamepadMock.axes[wheelCarMapper.direccion.getIndex()] = 0.1
+      gamepadMock.axes[wheelCarMapper.direccion!.getIndex()] = 0.1
 
       // Simular la ejecución de un intervalo
       // Verificar que reciba correctamente el estado
